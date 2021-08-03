@@ -1,2 +1,0 @@
-# Notes
-Note for all
