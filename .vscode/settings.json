@@ -3,6 +3,9 @@
         "ostream": "cpp",
         "__locale": "cpp",
         "ios": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "string": "cpp",
+        "__tuple": "cpp",
+        "array": "cpp"
     }
 }
