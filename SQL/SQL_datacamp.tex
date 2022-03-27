@@ -1,0 +1,2263 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\author{}
+\date{\vspace{-2.5em}}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+
+\hypertarget{part-1---rsqldf-setup}{%
+\section{Part 1 - Rsqldf Setup}\label{part-1---rsqldf-setup}}
+
+\hypertarget{load-required-packages}{%
+\subsubsection{1. Load Required Packages}\label{load-required-packages}}
+
+\begin{verbatim}
+install.packages("sqldf")  
+library("sqldf")  
+library(readxl)  # only if reading excel xlsx file.
+\end{verbatim}
+
+\hypertarget{importing-data-to-environment}{%
+\subsubsection{2. Importing Data to
+Environment}\label{importing-data-to-environment}}
+
+\begin{verbatim}
+orders <- read_excel("/Users/shayne_lin/Desktop/work experiennce/UCSB/PSTAT10/LunchCost/orders.xlsx")  
+\end{verbatim}
+
+\hypertarget{examples-from-sqldf-package}{%
+\subsubsection{3. Examples from sqldf
+package}\label{examples-from-sqldf-package}}
+
+\begin{verbatim}
+name_counts_emponly  <- sqldf("SELECT firstname, COUNT(firstname) as occurances 
+                              FROM employees 
+                              WHERE firstname != 'rudi' 
+                              GROUP BY firstname")
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{part-2---sql-full-tutorial}{%
+\section{PART 2 - SQL Full Tutorial}\label{part-2---sql-full-tutorial}}
+
+\hypertarget{section-1-selecting-columns}{%
+\subsection{SECTION 1: Selecting
+Columns}\label{section-1-selecting-columns}}
+
+\hypertarget{selcting-multiple-columns}{%
+\subsubsection{4. Selcting Multiple
+Columns}\label{selcting-multiple-columns}}
+
+\begin{verbatim}
+  To select multiple columns from a table, simply separate the column names with **commas**
+\end{verbatim}
+
+\hypertarget{select-all-columns-from-a-table}{%
+\subsubsection{5. Select All Columns From a
+Table}\label{select-all-columns-from-a-table}}
+
+\begin{verbatim}
+  Typing out every column name would be a pain, so there's a handy shortcut: "SELECT *":    
+  
+\end{verbatim}
+
+\begin{verbatim}
+  SELECT * 
+  FROM people;
+\end{verbatim}
+
+\hypertarget{return-a-certain-number-of-results}{%
+\subsubsection{6. Return a Certain Number of
+Results}\label{return-a-certain-number-of-results}}
+
+\begin{verbatim}
+  you can use the LIMIT keyword to limit the number of rows returned:  
+  
+\end{verbatim}
+
+\begin{verbatim}
+  SELECT *
+  FROM people
+  LIMIT 10;
+\end{verbatim}
+
+\textbf{Instructions:}
+
+Get the title, release year and country for every film.
+
+\begin{verbatim}
+  SELECT title,release_year,country
+  FROM films;
+\end{verbatim}
+
+Get all columns from the films table.
+
+\begin{verbatim}
+  SELECT *
+  FROM films;
+\end{verbatim}
+
+\hypertarget{select-distinct}{%
+\subsubsection{7. SELECT DISTINCT}\label{select-distinct}}
+
+If you want to select all the unique values from a column, you can use
+the \textbf{DISTINCT} keyword. This might be useful if, for example,
+you're interested in knowing which languages are represented in the
+films table:
+
+\begin{verbatim}
+  SELECT DISTINCT language
+  FROM films;
+\end{verbatim}
+
+\textbf{Instructions:}
+
+Get all the unique countries represented in the films table.
+
+\begin{verbatim}
+  SELECT DISTINCT country
+  FROM films;
+\end{verbatim}
+
+\hypertarget{learning-to-count}{%
+\subsubsection{8. LEARNING TO COUNT}\label{learning-to-count}}
+
+What if you want to count the number of employees in your employees
+table? The \textbf{COUNT( )} function lets you do this by returning the
+number of rows in one or more columns.
+
+For example, this code gives the number of rows in the people table:
+
+\begin{verbatim}
+  SELECT COUNT(*)
+  FROM people;
+\end{verbatim}
+
+\hypertarget{practice-with-count}{%
+\subsubsection{9. Practice with COUNT}\label{practice-with-count}}
+
+if you want to count the number of non-missing values in a particular
+column, you can call \textbf{COUNT( )} on just that column. Count
+returns with non-missing values;
+
+For example, to count the number of birth dates present in the people
+table:
+
+\begin{verbatim}
+  SELECT COUNT(birthdate)
+  FROM people;
+\end{verbatim}
+
+It's also common to combine \textbf{COUNT( )} with \textbf{DISTINCT} to
+count the number of distinct values in a column.
+
+\begin{verbatim}
+  SELECT COUNT(DISTINCT birthdate)
+  FROM peoplesql
+\end{verbatim}
+
+\textbf{Instructions:}\\
+Count the number of \emph{rows} in the people table.
+
+\begin{verbatim}
+  SELECT COUNT(*)
+  FROM people;
+\end{verbatim}
+
+Count the number of (non-missing) birth dates in the people table.
+
+\begin{verbatim}
+  SELECT COUNT(birthdate)
+  FROM people;
+\end{verbatim}
+
+Count the number of unique birth dates in the people table.
+
+\begin{verbatim}
+  SELECT COUNT(DISTINCT birthdate)
+  FROM people;
+\end{verbatim}
+
+\hypertarget{section-2-filtering-rows}{%
+\subsection{SECTION 2: Filtering Rows}\label{section-2-filtering-rows}}
+
+\hypertarget{where-and}{%
+\subsubsection{10. WHERE AND}\label{where-and}}
+
+You can build up your WHERE queries by combining multiple conditions
+with the AND keyword:
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year > 1994
+  AND release_year < 2000;
+\end{verbatim}
+
+OR, you can have different limitations for different fields. And You can
+add as many AND conditions as you need!
+
+\begin{verbatim}
+  SELECT *
+  FROM films
+  WHERE release_year > 2000
+  AND release_year < 2010
+  AND language = 'Spanish'
+\end{verbatim}
+
+\hypertarget{where-and-or}{%
+\subsubsection{11. WHERE and OR}\label{where-and-or}}
+
+What if you want to select rows based on multiple conditions where some
+but not all of the conditions need to be met? For this, SQL has the OR
+operator.
+
+For example, the following returns all films released in either 1994 or
+2000:
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year = 1994
+  OR release_year = 2000;
+\end{verbatim}
+
+Note that you need to specify the column for every OR condition, so the
+following is invalid:
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year = 1994 OR 2000;
+\end{verbatim}
+
+When combining AND and OR, be sure to enclose the individual clauses in
+parentheses, like so:
+
+\begin{verbatim}
+  SELECT title, release_year
+  FROM films
+  WHERE (release_year >= 1990 AND release_year < 2000)
+  AND (language = 'French' OR language = 'Spanish')
+  AND gross > 2000000;
+\end{verbatim}
+
+Otherwise, due to SQL's precedence rules, you may not get the results
+you're expecting!
+
+\hypertarget{where-in}{%
+\subsubsection{12. WHERE IN}\label{where-in}}
+
+WHERE is very useful for filtering results. However, if you want to
+filter based on many conditions, WHERE can get unwieldy. For example:
+
+\begin{verbatim}
+  SELECT name
+  FROM kids
+  WHERE age = 2
+  OR age = 4
+  OR age = 6
+  OR age = 8
+  OR age = 10;
+\end{verbatim}
+
+So, the \emph{IN} operator will allow you to specify multiple values in
+a WHERE clause, making it easier and quicker to specify multiple OR
+conditions!
+
+\begin{verbatim}
+  SELECT name
+  FROM kids
+  WHERE age IN (2, 4, 6, 8, 10);
+\end{verbatim}
+
+\hypertarget{between}{%
+\subsubsection{13. BETWEEN}\label{between}}
+
+As you've learned, you can use the following query to get titles of all
+films released in and between 1994 and 2000:
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year >= 1994
+  AND release_year <= 2000;
+\end{verbatim}
+
+Checking for ranges like this is very common, so in SQL the BETWEEN
+keyword provides a useful shorthand for filtering values within a
+specified range. This query is equivalent to the one above:
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year
+  BETWEEN 1994 AND 2000;
+\end{verbatim}
+
+It's important to remember that BETWEEN is inclusive, meaning the
+beginning and end values are included in the results!
+
+\hypertarget{between-and-or}{%
+\subsubsection{14. BETWEEN \& AND \& OR}\label{between-and-or}}
+
+Similar to the WHERE clause, the BETWEEN clause can be used with
+multiple AND and OR operators, so you can build up your queries and make
+them even more powerful! Things to note: BETWEEN AND is an inclusive
+function. Here's an example:
+
+\begin{verbatim}
+  SELECT title, release_year
+  FROM films
+  WHERE release_year BETWEEN 1990 AND 2000
+  AND budget > 100000000
+  AND (language = 'Spanish' OR language= 'French');
+\end{verbatim}
+
+\hypertarget{introduction-to-null-and-is-null}{%
+\subsubsection{15. Introduction to NULL and IS
+NULL}\label{introduction-to-null-and-is-null}}
+
+In SQL, NULL represents a missing or unknown value. You can check for
+NULL values using the expression IS NULL. For example, to count the
+number of missing birth dates in the people table:
+
+\begin{verbatim}
+  FROM people
+  WHERE birthdate IS NULL;
+\end{verbatim}
+
+As you can see, IS NULL is useful when combined with WHERE to figure out
+what data you're missing.
+
+Sometimes, you'll want to filter out missing values so you only get
+results which are not NULL. To do this, you can use the IS NOT NULL
+operator. For example, this query gives the names of all people whose
+birth dates are not missing in the people table.
+
+\begin{verbatim}
+  SELECT name
+  FROM people
+  WHERE birthdate IS NOT NULL;
+\end{verbatim}
+
+\hypertarget{like-and-not-like}{%
+\subsubsection{16. LIKE and NOT LIKE}\label{like-and-not-like}}
+
+As you've seen, the WHERE clause can be used to filter text data.
+However, so far you've only been able to filter by specifying the exact
+text you're interested in. In the real world, often you'll want to
+search for a pattern rather than a specific text string.
+
+In SQL, the LIKE operator can be used in a WHERE clause to search for a
+pattern in a column. To accomplish this, you use something called a
+wildcard as a placeholder for some other values. There are two wildcards
+you can use with LIKE:
+
+The \% wildcard will match zero, one, or many characters in text. For
+example, the following query matches companies like `Data', `DataC'
+`DataCamp', `DataMind', and so on:
+
+\begin{verbatim}
+  SELECT name
+  FROM companies
+  WHERE name LIKE 'Data%';
+\end{verbatim}
+
+The \_ wildcard will match a single character. For example, the
+following query matches companies like `DataCamp', `DataComp', and so
+on:
+
+\begin{verbatim}
+  SELECT name
+  FROM companies
+  WHERE name LIKE 'DataC_mp';
+\end{verbatim}
+
+You can also use the \textbf{NOT LIKE} operator to find records that
+don't match the pattern you specify.
+
+\begin{verbatim}
+  SELECT name
+  FROM people
+  WHERE name NOT LIKE 'A%';
+\end{verbatim}
+
+\hypertarget{section-3-aggregate-functions}{%
+\subsection{SECTION 3: Aggregate
+functions}\label{section-3-aggregate-functions}}
+
+Often, you will want to perform some calculation on the data in a
+database. SQL provides a few functions, called aggregate functions, to
+help you out with this.
+
+For example,
+
+\begin{verbatim}
+  SELECT AVG(budget)
+  FROM films;
+\end{verbatim}
+
+gives you the average value from the budget column of the films table.
+Similarly, the MAX() function returns the highest budget:
+
+\begin{verbatim}
+  SELECT MAX(budget)
+  FROM films;
+\end{verbatim}
+
+The SUM() function returns the result of adding up the numeric values in
+a column:
+
+\begin{verbatim}
+  SELECT SUM(budget)
+  FROM films;
+\end{verbatim}
+
+You can probably guess what the MIN() function does!
+
+However, when you want to find AVG of a calculation, it is not possible.
+You can find the average of an object first, then do the calculation:
+
+Example: Get the average duration in hours for all films, aliased as
+avg\_duration\_hours.
+
+\begin{verbatim}
+  SELECT AVG(duration/60.0) AS avg_duration_hours
+  FROM films;
+\end{verbatim}
+
+This is wrong. Here's the correct version:
+
+\begin{verbatim}
+  SELECT AVG(duration)/60.0 AS avg_duration_hours
+  FROM films;
+\end{verbatim}
+
+\hypertarget{combining-aggregate-functions-with-where}{%
+\subsubsection{17. Combining aggregate functions with
+WHERE}\label{combining-aggregate-functions-with-where}}
+
+Aggregate functions can be combined with the WHERE clause to gain
+further insights from your data.
+
+For example, to get the total budget of movies made in the year 2010 or
+later:
+
+\begin{verbatim}
+  SELECT SUM(budget)
+  FROM films
+  WHERE release_year >= 2010;
+\end{verbatim}
+
+\hypertarget{a-note-on-arithmatic}{%
+\subsubsection{18. A NOTE on ARITHMATIC}\label{a-note-on-arithmatic}}
+
+In addition to using aggregate functions, you can perform basic
+arithmetic with symbols like +, -, *, and /.
+
+So, for example, this gives a result of 12:
+
+\begin{verbatim}
+  SELECT (4 * 3);
+\end{verbatim}
+
+However, the following gives a result of 1:
+
+\begin{verbatim}
+  SELECT (4 / 3);
+\end{verbatim}
+
+What's going on here?
+
+SQL assumes that if you divide an integer by an integer, you want to get
+an integer back. So be careful when dividing!
+
+If you want more precision when dividing, you can add decimal places to
+your numbers. For example,
+
+\begin{verbatim}
+  SELECT (4.0 / 3.0) AS result;
+\end{verbatim}
+
+gives you the result you would expect: 1.333.
+
+\hypertarget{its-as-simple-as-aliasing}{%
+\subsubsection{19. It's AS simple AS
+aliasing}\label{its-as-simple-as-aliasing}}
+
+You may have noticed in the first exercise of this chapter that the
+column name of your result was just the name of the function you used.
+For example,
+
+\begin{verbatim}
+  SELECT MAX(budget)
+  FROM films;
+\end{verbatim}
+
+gives you a result with one column, named max. But what if you use two
+functions like this?
+
+\begin{verbatim}
+  SELECT MAX(budget), MAX(duration)
+  FROM films;
+\end{verbatim}
+
+Well, then you'd have two columns named max, which isn't very useful!
+
+To avoid situations like this, SQL allows you to do something called
+aliasing. Aliasing simply means you assign a temporary name to
+something. To alias, you use the AS keyword, which you've already seen
+earlier in this course.
+
+For example, in the above example we could use aliases to make the
+result clearer:
+
+\begin{verbatim}
+  SELECT MAX(budget) AS max_budget,
+         MAX(duration) AS max_duration
+  FROM films;
+\end{verbatim}
+
+With calculations:
+
+\begin{verbatim}
+  SELECT title, (gross-budget) AS net_profit
+  FROM films;
+\end{verbatim}
+
+\hypertarget{more-aliasing}{%
+\subsubsection{20. MORE ALIASING}\label{more-aliasing}}
+
+Practice:\\
+Get the percentage of people who are no longer alive. Alias the result
+as percentage\_dead. Remember to use 100.0 and not 100!
+
+\begin{verbatim}
+  SELECT COUNT(deathdate) * 100.0 / COUNT(*) AS percentage_dead
+  FROM people;
+\end{verbatim}
+
+Because count only returns variables that are not null. If you count
+something, you should not also specify that the thing is not null, which
+will cause mistakes.
+
+Get the number of years between the newest film and oldest film. Alias
+the result as difference.
+
+\begin{verbatim}
+  SELECT MAX(release_year)-MIN(release_year) AS difference
+  FROM films;
+\end{verbatim}
+
+Get the number of decades the films table covers. Alias the result as
+number\_of\_decades. The top half of your fraction should be enclosed in
+parentheses.
+
+\begin{verbatim}
+  SELECT (MAX(release_year) - MIN(release_year))/10 AS number_of_decades
+  FROM films;
+\end{verbatim}
+
+\hypertarget{section-4-sorting-and-grouping}{%
+\subsection{SECTION 4: Sorting and
+Grouping}\label{section-4-sorting-and-grouping}}
+
+\hypertarget{order-by}{%
+\subsubsection{21. ORDER BY}\label{order-by}}
+
+In SQL, the ORDER BY keyword is used to sort results in ascending or
+descending order according to the values of one or more columns.
+
+By default ORDER BY will sort in ascending order. If you want to sort
+the results in descending order, you can use the DESC keyword. For
+example,
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  ORDER BY release_year DESC;
+\end{verbatim}
+
+\hypertarget{sorting-single-columns-practice}{%
+\subsubsection{22. Sorting Single Columns
+Practice}\label{sorting-single-columns-practice}}
+
+Get the title of films released in 2000 or 2012, in the order they were
+released.
+
+\begin{verbatim}
+  SELECT title
+  FROM films
+  WHERE release_year in (2000, 2012)
+  ORDER BY release_year;
+\end{verbatim}
+
+\hypertarget{sorting-multiple-columns-practice}{%
+\subsubsection{23. Sorting Multiple Columns
+Practice}\label{sorting-multiple-columns-practice}}
+
+ORDER BY can also be used to sort on multiple columns. It will sort by
+the first column specified, then sort by the next, then the next, and so
+on. For example,
+
+\begin{verbatim}
+  SELECT birthdate, name
+  FROM people
+  ORDER BY birthdate, name;
+\end{verbatim}
+
+sorts on birth dates first (oldest to newest) and then sorts on the
+names in alphabetical order. The order of columns is important!Remember,
+to specify multiple columns you separate the column names with a comma.
+
+\hypertarget{group-by}{%
+\subsubsection{24. GROUP BY}\label{group-by}}
+
+Now you know how to sort results! Often you'll need to aggregate
+results. For example, you might want to count the number of male and
+female employees in your company. Here, what you want is to group all
+the males together and count them, and group all the females together
+and count them. In SQL, GROUP BY allows you to group a result by one or
+more columns, like so:
+
+\begin{verbatim}
+  SELECT sex, count(*)
+  FROM employees
+  GROUP BY sex;
+\end{verbatim}
+
+This might give, for example:
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+sex & count \\
+\midrule
+\endhead
+male & 15 \\
+female & 19 \\
+\bottomrule
+\end{longtable}
+
+Commonly, GROUP BY is used with aggregate functions like COUNT() or
+MAX(). Note that GROUP BY always goes after the FROM clause!
+
+\hypertarget{group-by-practice}{%
+\subsubsection{25. GROUP BY practice}\label{group-by-practice}}
+
+As you've just seen, combining aggregate functions with GROUP BY can
+yield some powerful results!
+
+A word of warning: SQL will return an error if you try to SELECT a field
+that is not in your GROUP BY clause without using it to calculate some
+kind of value about the entire group.
+
+Note that you can combine GROUP BY with ORDER BY to group your results,
+calculate something about them, and then order your results. For
+example,
+
+\begin{verbatim}
+  SELECT sex, count(*)
+  FROM employees
+  GROUP BY sex
+  ORDER BY count DESC;
+\end{verbatim}
+
+might return something like:
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+sex & count \\
+\midrule
+\endhead
+female & 19 \\
+male & 15 \\
+\bottomrule
+\end{longtable}
+
+because there are more females at our company than males. Note also that
+ORDER BY always goes after GROUP BY.
+
+\textbf{EXERCISES:}\\
+1.Get the release year and count of films released in each year.
+
+\begin{verbatim}
+  SELECT release_year,COUNT(id)
+  FROM films
+  GROUP BY release_year;
+\end{verbatim}
+
+2.Get the release year and average duration of all films, grouped by
+release year.
+
+\begin{verbatim}
+  SELECT release_year,AVG(duration)
+  FROM films
+  GROUP BY release_year;
+\end{verbatim}
+
+3.Get the IMDB score and count of film reviews grouped by IMDB score in
+the reviews table.
+
+\begin{verbatim}
+  SELECT imdb_score,COUNT(id)
+  FROM reviews
+  GROUP BY imdb_score;
+\end{verbatim}
+
+\hypertarget{group-by-practice-2}{%
+\subsubsection{26. GROUP BY practice (2)}\label{group-by-practice-2}}
+
+Now practice your new skills by combining GROUP BY and ORDER BY with
+some more aggregate functions!
+
+Make sure to always put the ORDER BY clause at the end of your query.
+You can't sort values that you haven't calculated yet!
+
+Get the release year, country, and highest budget spent making a film
+for each year, for each country. Sort your results by release year and
+country.
+
+\begin{verbatim}
+  SELECT release_year,country,MAX(budget)
+  FROM films
+  GROUP BY release_year,country
+  ORDER BY release_year,country;
+\end{verbatim}
+
+\hypertarget{where-and-aggregate-functionsavgmaxminsumgroup-by-cannot-be-together}{%
+\subsubsection{27. WHERE and AGGREGATE functions:AVG,MAX,MIN,SUM,GROUP
+BY cannot be
+together}\label{where-and-aggregate-functionsavgmaxminsumgroup-by-cannot-be-together}}
+
+In SQL, aggregate functions can't be used in WHERE clauses. For example,
+the following query is \emph{invalid}:
+
+\begin{verbatim}
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  WHERE COUNT(title) > 10;
+\end{verbatim}
+
+This means that if you want to filter based on the result of an
+aggregate function, you need another way! That's where the HAVING clause
+comes in. For example,
+
+\begin{verbatim}
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  HAVING COUNT(title) > 10;
+\end{verbatim}
+
+shows only those years in which more than 10 films were released.
+
+In how many different years were more than 200 movies released?
+
+\begin{verbatim}
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  HAVING COUNT(title) > 200;
+\end{verbatim}
+
+\hypertarget{all-together}{%
+\subsubsection{28. All together}\label{all-together}}
+
+Time to practice using ORDER BY, GROUP BY and HAVING together.
+
+Now you're going to write a query that returns the average budget and
+average gross earnings for films in each year after 1990, if the average
+budget is greater than \$60 million.
+
+\begin{verbatim}
+  SELECT release_year, AVG(budget) AS avg_budget, AVG(gross) AS avg_gross
+  FROM films
+  GROUP BY release_year
+  HAVING AVG(budget)> 60000000
+  AND release_year > 1990
+  ORDER BY avg_gross DESC;
+\end{verbatim}
+
+\hypertarget{all-together2}{%
+\subsubsection{29. All together(2)}\label{all-together2}}
+
+If you only want to return a certain number of results, you can use the
+LIMIT keyword to \emph{limit} the number of rows returned
+
+Get the country, average budget, and average gross take of countries
+that have made more than 10 films. Order the result by country name, and
+limit the number of results displayed to 5. You should alias the
+averages as avg\_budget and avg\_gross respectively.
+
+\begin{verbatim}
+  SELECT country,AVG(budget) AS avg_budget,AVG(gross) AS avg_gross
+  FROM films
+  GROUP BY country
+  HAVING COUNT(title) > 10
+  ORDER BY country
+  LIMIT 5;
+\end{verbatim}
+
+\hypertarget{a-taste-of-things-to-more-join-example}{%
+\subsubsection{30. A taste of things to more-join
+example}\label{a-taste-of-things-to-more-join-example}}
+
+\begin{verbatim}
+  SELECT title, imdb_score
+  FROM films
+  JOIN reviews
+  ON films.id = reviews.film_id
+  WHERE title = 'To Kill a Mockingbird';
+\end{verbatim}
+
+\hypertarget{part-3---joining-data-in-sql}{%
+\section{PART 3 - JOINING DATA IN
+SQL}\label{part-3---joining-data-in-sql}}
+
+\hypertarget{section-1-introduction-to-joins}{%
+\subsection{SECTION 1: Introduction to
+joins}\label{section-1-introduction-to-joins}}
+
+\hypertarget{introduction-to-inner-join}{%
+\subsubsection{31. Introduction to INNER
+JOIN}\label{introduction-to-inner-join}}
+
+Basic frame of inner join:
+
+\begin{verbatim}
+  SELECT *
+  FROM left_table
+  INNER JOIN right_table
+  ON left_table.id = right_table.id;
+\end{verbatim}
+
+example:
+
+\begin{verbatim}
+  SELECT p1.country,p1.continent,prime_minister,president
+  FROM prime_misters AS p1
+  INNER JOIN presidents AS p2
+  ON p1.country = p2.country;
+\end{verbatim}
+
+Now, use inner join to combine \emph{cities} table with \emph{countries}
+table, alias and joinning on cities.country\_code and countries.code.
+
+\begin{verbatim}
+  SELECT *
+  FROM cities AS city
+  INNER JOIN countries AS country
+  ON cities.country_code = countries.code;
+\end{verbatim}
+
+\hypertarget{inner-join-2}{%
+\subsubsection{32. INNER JOIN (2)}\label{inner-join-2}}
+
+Making alias with inner join's table and inner join's table name;
+
+\begin{verbatim}
+  SELECT c1.name AS city, c2.name AS country
+  FROM cities AS c1
+  INNER JOIN countries AS c2
+  ON c1.country_code = c2.code;
+\end{verbatim}
+
+Notice that to select a field in your query that appears in multiple
+tables, you'll need to identify which table/table alias you're referring
+to by using a . in your SELECT statement.
+
+Exercise: get data from both the countries and economies tables to
+examine the inflation rate for both 2010 and 2015.
+
+\begin{verbatim}
+  SELECT c.code AS country_code,c.name,e.year,e.inflation_rate
+  FROM countries AS c
+  INNER JOIN economies AS e
+  ON c.code = e.code
+  WHERE e.year IN (2010,2015);
+\end{verbatim}
+
+\hypertarget{inner-join--combining-more-than-two-tables-at-once}{%
+\subsubsection{33. INNER JOIN- combining more than two tables at
+once}\label{inner-join--combining-more-than-two-tables-at-once}}
+
+The ability to combine multiple joins in a single query is a powerful
+feature of SQL, e.g:
+
+\begin{verbatim}
+  SELECT *
+  FROM left_table
+  INNER JOIN right_table
+  ON left_table.id = right_table.id
+  INNER JOIN another_table
+  ON left_table.id = another_table.id;
+\end{verbatim}
+
+As you can see here it becomes tedious to continually write long table
+names in joins. This is when it becomes useful to alias each table using
+the first letter of its name (e.g.~countries AS c)!
+
+Now, for each country, you want to get the country name, its region, the
+fertility rate, and the unemployment rate for both 2010 and 2015.
+
+\begin{verbatim}
+  SELECT c.code,c.name,c.region,e.year,p.fertility_rate,e.unemployment_rate
+  FROM countries AS c
+  INNER JOIN economies AS e
+  ON c.code = e.code
+  INNER JOIN populations AS p
+  ON c.code = p.country_code
+  WHERE e.year in (2010,2015);
+\end{verbatim}
+
+The above is wrong because of the last statement in inner join. When
+selecting fields that are in multiple tables, remember to making the
+connection on multiples.
+
+explaination:The trouble with doing your last join on c.code = e.code
+and not also including year is that e.g.~the 2010 value for
+fertility\_rate is also paired with the 2015 value for
+unemployment\_rate. Fix your previous query: in your last ON clause, use
+AND to add an additional joining condition. In addition to joining on
+code in c and e, also join on year in e and p.
+
+\begin{verbatim}
+  -- Select fields
+  SELECT c.code, name, region, e.year, f rtility_rate, unemployment_rate
+  -- From countries (alias as c)
+  FROM countries AS c
+  -- Join to populations (as p)
+  INNER JOIN populations AS p
+  -- Match on country code
+  ON c.code = p.country_code
+  -- Join to economies (as e)
+  INNER JOIN economies AS e
+  -- Match on country code and year
+  ON c.code = e.code AND e.year = p.year;
+\end{verbatim}
+
+\hypertarget{inner-join-with-using}{%
+\subsubsection{34. INNER JOIN with USING}\label{inner-join-with-using}}
+
+Inner join with using\\
+When joining tables with a common field name, e.g.~
+
+\begin{verbatim}
+  SELECT *
+  FROM countries
+  INNER JOIN economies
+  ON countries.code = economies.code
+\end{verbatim}
+
+You can use USING as a shortcut:
+
+\begin{verbatim}
+  SELECT *
+  FROM countries
+  INNER JOIN economies
+  USING(code)
+\end{verbatim}
+
+\hypertarget{self-join}{%
+\subsubsection{35. SELF JOIN}\label{self-join}}
+
+Self-joins are used to compare values in a field to other values of the
+same field from within the same table.
+
+\url{Example:finishing} off the self-join on prime\_misnisters
+
+\begin{verbatim}
+  SELECT p1.country AS country1,p2.country AS country2,p1.continent
+  FROM prime_ministers AS p1
+  INNER JOIN prime_minister AS p2
+  ON p1.continent = p2.continent AND p1.country = p2.country
+  LIMIT 13;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{1/3}
+
+\begin{itemize}
+\item
+  Join populations with itself ON country\_code.
+\item
+  Select the country\_code from p1 and the size field from both p1 and
+  p2. SQL won't allow same-named fields, so alias p1.size as size2010
+  and p2.size as size2015.
+\end{itemize}
+
+\begin{verbatim}
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010,
+         p2.size AS size2015
+  -- From populations (alias as p1)
+  FROM populations AS p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations AS p2
+      -- Match on country code
+      ON  p1.country_code = p2.country_code;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{2/3}
+
+\begin{itemize}
+\tightlist
+\item
+  Notice from the result that for each \emph{country\_code} you have
+  four entries laying out all combinations of 2010 and 2015.
+\item
+  Extend the \emph{ON} in your query to include only those records where
+  the \emph{p1.year} (2010) matches with \emph{p2.year - 5} (2015 - 5 =
+  2010). This will omit the three entries per \emph{country\_code} that
+  you aren't interested in.
+\item
+  Even though you did not select it from the SELECT, as it is matching
+  two completely same tables, you need to consider replication of data
+  as you apply.
+\end{itemize}
+
+\begin{verbatim}
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010,
+         p2.size AS size2015
+  -- From populations (alias as p1)
+  FROM populations as p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations as p2
+      -- Match on country code
+      ON p1.country_code = p2.country_code
+          -- and year (with calculation)
+          AND p1.year = p2.year-5;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{3/3}
+
+\begin{itemize}
+\item
+  As you just saw, you can also use SQL to calculate values like
+  \emph{p2.year - 5} for you. With two fields like \emph{size2010} and
+  \emph{size2015}, you may want to determine the percentage increase
+  from one field to the next:
+\item
+  With two numeric fields and , the percentage growth from to can be
+  calculated as (B-A)/A*100.0
+\item
+  Add a new field to \emph{SELECT}, aliased as \emph{growth\_perc}, that
+  calculates the percentage population growth from 2010 to 2015 for each
+  country, using \emph{p2.size} and \emph{p1.size}
+\end{itemize}
+
+\begin{verbatim}
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010, 
+         p2.size AS size2015,
+         -- Calculate growth_perc
+         ((p2.size - p1.size)/p1.size* 100.0) AS growth_perc
+  -- From populations (alias as p1)
+  FROM populations AS p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations AS p2
+      -- Match on country code
+      ON p1.country_code = p2.country_code
+          -- and year (with calculation)
+          AND p1.year = p2.year - 5;
+\end{verbatim}
+
+\hypertarget{case-when-and-then}{%
+\subsubsection{36. Case when and then}\label{case-when-and-then}}
+
+Often it's useful to look at a numerical field not as raw data, but
+instead as being in different categories or groups.
+
+You can use CASE with WHEN, THEN, ELSE, and END to define a new grouping
+field.
+
+\textbf{Instructions:}\\
+Using the \emph{countries} table, create a new field \emph{AS
+geosize\_group} that groups the countries into three groups:
+
+\begin{itemize}
+\tightlist
+\item
+  If \emph{surface\_area} is greater than 2 million,
+  \emph{geosize\_group} is \emph{`large'}.
+\item
+  If \emph{surface\_area} is greater than 350 thousand but not larger
+  than 2 million, \emph{geosize\_group} is \emph{`medium'}.
+\item
+  Otherwise, \emph{geosize\_group} is \emph{`small'}.
+\end{itemize}
+
+\begin{verbatim}
+  SELECT name, continent, code, surface_area,
+      -- First case
+      CASE WHEN surface_area> 2000000 THEN 'large'
+          -- Second case
+          WHEN  surface_area > 350000 THEN 'medium'
+          -- Else clause + end
+          ELSE 'small' END
+          -- Alias name
+          AS geosize_group
+  -- From table
+  FROM countries;
+\end{verbatim}
+
+\hypertarget{into-to-save-edited-table-as-a-new-table}{%
+\subsubsection{37. INTO to save edited table as a new
+table}\label{into-to-save-edited-table-as-a-new-table}}
+
+The table you created with the added \emph{geosize\_group} field has
+been loaded for you here with the name \emph{countries\_plus}. Observe
+the use of (and the placement of) the \emph{INTO} command to create this
+\emph{countries\_plus} table:
+
+\begin{verbatim}
+  SELECT name, continent, code, surface_area,
+      CASE WHEN surface_area > 2000000
+              THEN 'large'
+         WHEN surface_area > 350000
+              THEN 'medium'
+         ELSE 'small' END
+         AS geosize_group
+  INTO countries_plus
+  FROM countries;
+\end{verbatim}
+
+You will now explore the relationship between the size of a country in
+terms of surface area and in terms of population using grouping fields
+created with \emph{CASE}.
+
+By the end of this exercise, you'll be writing two queries back-to-back
+in a single script.
+
+\textbf{Instructions}\\
+\textbf{1/3}\\
+Using the \emph{populations} table focused only for the \emph{year}
+2015, create a new field aliased as \emph{popsize\_group} to organize
+population \emph{size} into
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{`large'} (\textgreater{} 50 million),\\
+\item
+  \emph{`medium'} (\textgreater{} 1 million), and\\
+\item
+  \emph{`small'} groups.\\
+  Select only the country code, population size, and this new
+  \emph{popsize\_group} as fields.
+\end{itemize}
+
+\begin{verbatim}
+  SELECT country_code,size,
+    CASE WHEN size > 50000000
+      THEN 'large'
+         WHEN size > 1000000
+      THEN 'medium'
+         ELSE 'small' 
+      END AS popsize_group
+  FROM populations
+  WHERE year = 2015;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{2/3}\\
+* Use \emph{INTO} to save the result of the previous query as
+\emph{pop\_plus}. You can see an example of this in the
+\emph{countries\_plus} code in the assignment text. Make sure to include
+a \emph{;} at the end of your \emph{WHERE} clause!
+
+\begin{itemize}
+\tightlist
+\item
+  Then, include another query below your first query to display all the
+  records in \emph{pop\_plus} using SELECT * FROM pop\_plus; so that you
+  generate results and this will display \emph{pop\_plus} in the query
+  result.
+\end{itemize}
+
+\begin{verbatim}
+  SELECT country_code,size,
+      CASE WHEN size > 50000000
+        THEN 'large'
+           WHEN size > 1000000
+        THEN 'medium'
+           ELSE 'small' 
+        END AS popsize_group
+    INTO pop_plus
+    FROM populations
+    WHERE year = 2015;
+    
+  SELECT *
+  FROM pop_plus
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Keep the first query intact that creates \emph{pop\_plus} using
+  \emph{INTO}.
+\item
+  Write a query to join \emph{countries\_plus AS c} on the left with
+  \emph{pop\_plus AS p} on the right matching on the country code
+  fields.
+\item
+  Sort the data based on \emph{geosize\_group}, in ascending order so
+  that large appears on top.
+\item
+  Select the name, continent, geosize\_group, and \emph{popsize\_group}
+  fields.
+\end{itemize}
+
+\begin{verbatim}
+  SELECT country_code, size,
+    CASE WHEN size > 50000000
+              THEN 'large'
+         WHEN size > 1000000
+              THEN 'medium'
+         ELSE 'small' END
+         AS popsize_group
+  INTO pop_plus       
+  FROM populations
+  WHERE year = 2015;
+  
+  -- Select fields
+  SELECT name,continent,geosize_group,popsize_group
+  -- From countries_plus (alias as c)
+  FROM countries_plus AS c
+    -- Join to pop_plus (alias as p)
+  INNER JOIN pop_plus AS p
+      -- Match on country code
+    ON p.country_code=c.code
+  -- Order the table    
+  ORDER BY geosize_group;
+\end{verbatim}
+
+\hypertarget{section-2-outer-joins-and-cross-joins}{%
+\subsection{SECTION 2: Outer joins and cross
+joins}\label{section-2-outer-joins-and-cross-joins}}
+
+Outer joins is reaching out to another table while keeping all of the
+records of the original table. While inner joins keep only the records
+IN both tables. Outer joins include (1) Left joins (2) Right joins (3)
+Full joins.
+
+The syntax of a LEFT JOIN:
+
+\begin{verbatim}
+SELECT p1.country, prime_minister, president
+FROM prime_ministers AS p1
+LEFT JOIN presidents AS p2
+ON p1.country = p2.country;
+\end{verbatim}
+
+\hypertarget{left-join}{%
+\subsubsection{38. Left Join}\label{left-join}}
+
+Combine two datasets together with inner joins and left joins,
+genenrally, left joins should end up with more variables at the end and
+inner joins end up with less variable at the end.
+
+\begin{verbatim}
+  -- Select fields
+  SELECT region, AVG(gdp_percapita) AS avg_gdp
+  -- From countries (alias as c)
+  FROM countries AS c
+    -- Left join with economies (alias as e)
+    LEFT JOIN economies as e
+      -- Match on code fields
+      ON c.code = e.code
+  -- Focus on 2010
+  WHERE year = 2010
+  -- Group by region
+  GROUP BY c.region
+  -- Order by descending avg_gdp
+  ORDER BY avg_gdp DESC;
+\end{verbatim}
+
+**Left Joins are functionally the same as right joins using reverse,
+even in multiple tables' combination case.
+
+\begin{verbatim}
+  -- convert this code to use RIGHT JOINs instead of LEFT JOINs
+  /*
+  SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+         indep_year, languages.name AS language, percent
+  FROM cities
+    LEFT JOIN countries
+      ON cities.country_code = countries.code
+    LEFT JOIN languages
+      ON countries.code = languages.code
+  ORDER BY city, language;
+  */
+  
+  SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+         indep_year, languages.name AS language, percent
+  FROM languages
+    RIGHT JOIN countries
+      ON countries.code = languages.code
+    RIGHT JOIN cities
+      ON cities.country_code = countries.code
+  ORDER BY city, language;
+\end{verbatim}
+
+\hypertarget{full-joins}{%
+\subsubsection{39. Full joins}\label{full-joins}}
+
+Full joins is a union of the combination of the sets, including both
+table\_1 and table\_2 attributes at the same time.
+
+\begin{verbatim}
+  SELECT countries.name, code, languages.name AS language
+  -- From languages
+  FROM languages 
+    -- Join to countries
+    FULL JOIN countries
+      -- Match on code
+      USING (code)
+  -- Where countries.name starts with V or is null
+  WHERE countries.name LIKE 'v%' OR countries.name IS NULL
+  -- Order by ascending countries.name
+  ORDER BY countries.name
+\end{verbatim}
+
+\hypertarget{crossing-the-rubicon-cross-joins}{%
+\subsubsection{40. CROSSING the rubicon-CROSS
+JOINS}\label{crossing-the-rubicon-cross-joins}}
+
+CROSS JOINs create all possibe combinations of two tables. It helps
+generate all possible values of combinations of the table attributes.
+For example, table 1 has 3 attributes and table 2 has 3 attributes,
+together the make the cross joins of 9 attributes, assuming none of the
+values are the same.
+
+syntax:
+
+\begin{verbatim}
+SELECT 
+FROM 
+CROSS JOIN 
+\end{verbatim}
+
+\hypertarget{a-table-of-two-cities}{%
+\subsubsection{41. A table of two cities}\label{a-table-of-two-cities}}
+
+\textbf{Instructions}\\
+\textbf{1/2}
+
+\begin{itemize}
+\tightlist
+\item
+  Create a \emph{CROSS JOIN} with \emph{cities AS c} on the left and
+  \emph{languages AS l} on the right.
+\item
+  Make use of \emph{LIKE} and \emph{Hyder\%} to choose Hyderabad in both
+  countries.
+\item
+  Select only the city name \emph{AS city} and language name \emph{AS
+  language}
+\end{itemize}
+
+\begin{verbatim}
+SELECT c.name AS city,l.name AS language
+FROM cities AS c
+CROSS JOIN languages AS l
+WHERE c.name LIKE 'Hyder%';
+\end{verbatim}
+
+\hypertarget{outer-challenge}{%
+\subsubsection{42. Outer challenge}\label{outer-challenge}}
+
+In terms of life expectancy for 2010, determine the names of the lowest
+five countries and their regions.
+
+\textbf{Instructions}\\
+* Select country name AS country, region, and life expectancy AS
+life\_exp. * Make sure to use LEFT JOIN, WHERE, ORDER BY, and LIMIT.
+
+\begin{verbatim}
+SELECT c.name AS country,c.region,p.life_expectancy AS life_exp
+FROM countries AS c
+LEFT JOIN populations AS p
+ON c.code = p.country_code  
+WHERE p.year = 2010
+ORDER BY life_exp
+LIMIT 5;
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{section-3-set-theory-clauses}{%
+\subsection{SECTION 3: Set theory
+clauses}\label{section-3-set-theory-clauses}}
+
+\hypertarget{introduction-to-set-theory-venn-theories}{%
+\subsubsection{43. Introduction to Set Theory Venn
+Theories}\label{introduction-to-set-theory-venn-theories}}
+
+\textbf{Union}\\
+Includes only one overlap，which means the table will only include both
+of the attributes from the tables, but have everything appers only
+once.\\
+\textbf{Union All}\\
+Includes two overlaps, which means the table will also reveal the
+duplicates in the combination\\
+\textbf{Basic Syntax Example for UNION}
+
+\begin{verbatim}
+SELECT prime_minister AS leader, country
+FROM prime_ministers
+UNION
+SELECT monarch,country
+FROM monarchs
+ORDER BY country;
+\end{verbatim}
+
+\textbf{Note}\\
+When you use \texttt{UNION} for the tables, make sure that the combined
+fields should have same type of data. For example, that a character type
+cannot be combined with a numeric type.
+
+\textbf{Basic Syntax Example for UNION ALL}
+
+\begin{verbatim}
+SELECT prime_minister AS leader, country
+FROM prime_ministers
+UNION ALL
+SELECT monarch, country
+FROM monarchs
+ORDER BY country
+LIMIT 10;
+\end{verbatim}
+
+\textbf{Intersect}\\
+Only includes the overlap once and only the overlap, only include the
+intersection of two tables.\\
+\textbf{Except}\\
+Only includes one side of the table and exclude the overlap of the two
+tables.
+
+\hypertarget{union}{%
+\subsubsection{44. Union}\label{union}}
+
+\textbf{Instructions}\\
+* Combine the two new tables into one table containing all of the fields
+in economies2010.\\
+* Sort this resulting single table by country code and then by year,
+both in ascending order.
+
+\begin{verbatim}
+SELECT *
+FROM economies2010
+UNION
+SELECT *
+FROM economies2015
+ORDER BY code,year;
+\end{verbatim}
+
+\hypertarget{union-to-count-attributes-occurrences-of-a-field-for-multiple-tables2}{%
+\subsubsection{45. Union to Count Attributes Occurrences of a field for
+Multiple
+Tables(2)}\label{union-to-count-attributes-occurrences-of-a-field-for-multiple-tables2}}
+
+\texttt{UNION} can also be used to determine all occurrences of a field
+across multiple tables. Try out this exercise with no starter code.
+
+\textbf{Instructions:}
+
+\begin{itemize}
+\tightlist
+\item
+  Determine all (non-duplicated) country codes in either the
+  \texttt{cities} or the \texttt{currencies} table. The result should be
+  a table with only one field called \texttt{country\_code}.\\
+\item
+  Sort by \texttt{country\_code} in alphabetical order.
+\end{itemize}
+
+\begin{verbatim}
+SELECT c1.code
+FROM currencies AS c1
+UNION
+SELECT c2.country_code
+FROM cities AS c2
+ORDER BY c2.country_code
+\end{verbatim}
+
+\hypertarget{union-all}{%
+\subsubsection{46. Union all}\label{union-all}}
+
+\begin{itemize}
+\item
+  As you saw, duplicates were removed from the previous two exercises by
+  using \texttt{UNION}.
+\item
+  To include duplicates, you can use \texttt{UNION\ ALL}.
+\end{itemize}
+
+\textbf{Instructions}
+
+\begin{itemize}
+\tightlist
+\item
+  Determine all combinations (include duplicates) of country code and
+  year that exist in either the `economies or the populations tables.
+  Order by code then year.\\
+\item
+  The result of the query should only have two columns/fields. Think
+  about how many records this query should result in.\\
+\item
+  You'll use code very similar to this in your next exercise after the
+  video. Make note of this code after completing it.
+\end{itemize}
+
+\begin{verbatim}
+  -- Select fields
+  SELECT code,year
+    -- From economies
+    FROM economies
+    -- Set theory clause
+    UNION ALL
+  -- Select fields
+  SELECT country_code, year
+    -- From populations
+    FROM populations
+  -- Order by code, year
+  ORDER BY code, year;
+\end{verbatim}
+
+\hypertarget{introduction-to-intersect}{%
+\subsubsection{47. Introduction to
+Intersect}\label{introduction-to-intersect}}
+
+\textbf{Syntax}
+
+\begin{verbatim}
+SELECT id
+FROM left_one
+INTERSECT
+SELECT id
+FROM right_one;
+\end{verbatim}
+
+\textbf{Distinction from joins and union all}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{INTERSECT} looks for records in common, not individual key
+  fields like what a join does to match.
+\item
+  \texttt{INTERSECT} will only return records that both tables have in
+  common.
+\end{itemize}
+
+\textbf{Instruction for Exercise}
+
+Finding same information from both of the tables, across the table.\\
+Question: As you think about major world cities and their corresponding
+country, you may ask which countries also have a city with the same name
+as their country name?
+
+\begin{verbatim}
+  -- Select fields
+  SELECT countries.name
+    -- From countries
+    FROM countries
+    -- Set theory clause
+    INTERSECT
+  -- Select fields
+  SELECT cities.name
+    -- From cities
+    FROM cities;
+\end{verbatim}
+
+\hypertarget{introduction-to-except}{%
+\subsubsection{48. Introduction to
+Except}\label{introduction-to-except}}
+
+Remember, You saw earlier that there are some monarchs that also act as
+the prime minister for their country. One way to determine those
+monarchs in the monarchs table that do not also hold the title of prime
+minister is to use the EXCEPT clause. This SQL query selects the monarch
+field from monarchs and then looks for common entries with the
+prime\_ministers field, while also keeping track of the country for each
+leader. You can see in the resulting query that only the two European
+monarchs are not also prime ministers in the leaders database.\\
+Syntax:
+
+\begin{verbatim}
+SELECT monarch, country
+FROM monarchs
+EXCEPT 
+SELECT prime_minister,country
+FROM prime_ministers;
+\end{verbatim}
+
+Exercise: Get the names of cities in cities which are not noted as
+capital cities in countries as a single field result.
+
+Note that there are some countries in the world that are not included in
+the countries table, which will result in some cities not being labeled
+as capital cities when in fact they are.
+
+Instructions 100 XP Order the resulting field in ascending order. Can
+you spot the city/cities that are actually capital cities which this
+query misses?
+
+\begin{verbatim}
+SELECT countries.capital
+FROM countries
+EXCEPT
+SELECT cities.name
+FROM cities
+ORDER BY capital;
+\end{verbatim}
+
+\hypertarget{introduction-to-semi-joins-and-anti-joins}{%
+\subsubsection{49. Introduction to Semi-joins and
+Anti-joins}\label{introduction-to-semi-joins-and-anti-joins}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Semi Join:} A semi-join matches records by key field in the
+  right table with those in the left. It then picks out only the rows in
+  the left table that match that condition.\\
+\item
+  \textbf{Anti-join:} The anti-join picks out those columns in the left
+  table that do not match the condition on the right table.\\
+\item
+  \textbf{Difference:} In comparison to joins we learnt before, joins we
+  learnt were to combine the tables. But now we are using other tables
+  to give condition for our current left table.\\
+  \textbf{Syntax}
+\end{itemize}
+
+Finish the semi-join (an intro to subqueries)
+
+\begin{verbatim}
+SELECT president, country, continent
+FROM presidents
+WHERE country IN
+  (SELECT name
+   FROM states
+   WHERE indep_year < 1800);
+\end{verbatim}
+
+HERE's the Anti-join
+
+\begin{verbatim}
+SELECT president,country,continent
+FROM presidents
+WHERE continent LIKE '%America'
+  AND country NOT IN
+    (SELECT name
+     FROM states
+     WHERE indep_year < 1000);
+\end{verbatim}
+
+\hypertarget{semi-join-exercises-retrives-languages-spoken-in-the-middle-east}{%
+\subsubsection{50. Semi-join Exercises-retrives languages spoken in the
+Middle
+East}\label{semi-join-exercises-retrives-languages-spoken-in-the-middle-east}}
+
+\textbf{Instructions} \textbf{1/3}\\
+You are now going to use the concept of a semi-join to identify
+languages spoken in the Middle East. Begin by selecting all country
+codes in the Middle East as a single field result using \texttt{SELECT},
+\texttt{FROM}, and \texttt{WHERE}.
+
+\begin{verbatim}
+SELECT code
+FROM countries
+WHERE region = 'Middle East';
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{2/3}\\
+* Below the commented code, select only unique languages by name
+appearing in the \texttt{languages} table. * Order the resulting single
+field table by \texttt{name} in ascending order.
+
+\begin{verbatim}
+SELECT DISTINCT name
+FROM languages
+ORDER BY name;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{3/3}\\
+* Combine the previous two queries into one query by adding a WHERE IN
+statement to the SELECT DISTINCT query to determine the unique languages
+spoken in the Middle East.\\
+* Order the result by name in ascending order.
+
+\begin{verbatim}
+SELECT DISTINCT name
+  FROM languages
+WHERE code in
+  (SELECT code
+   FROM countries
+   WHERE region = 'Middle East')
+ORDER BY NAME;
+\end{verbatim}
+
+\hypertarget{relating-semi-jin-to-a-tweaked-inner-join.}{%
+\subsubsection{51. Relating semi-jin to a tweaked inner
+join.}\label{relating-semi-jin-to-a-tweaked-inner-join.}}
+
+\textbf{Using subqueries in semi-joins:}
+
+\begin{verbatim}
+  SELECT DISTINCT name
+  FROM languages
+  WHERE code IN
+    (SELECT code
+     FROM countries
+     WHERE region = 'Middle East')
+  ORDER BY name;
+\end{verbatim}
+
+\textbf{Using inner join to solve the same problem}
+
+\begin{verbatim}
+SELECT DISTINCT languages.name AS language
+FROM languages
+INNER JOIN countries
+ON languages.code = countries.code
+WHERE region = 'Middle East'
+ORDER BY language;
+\end{verbatim}
+
+\hypertarget{diagnosing-problems-using-anti-join}{%
+\subsubsection{52. Diagnosing problems using
+anti-join}\label{diagnosing-problems-using-anti-join}}
+
+\begin{itemize}
+\item
+  Another powerful join in SQL is the anti-join. It is particularly
+  useful in identifying which records are causing an incorrect number of
+  records to appear in join queries.
+\item
+  You will also see another example of a subquery here, as you saw in
+  the first exercise on semi-joins. Your goal is to identify the
+  currencies used in Oceanian countries!
+\end{itemize}
+
+\textbf{Instructions}\\
+\textbf{1/3}\\
+Begin by determining the number of countries in countries that are
+listed in Oceania using SELECT, FROM, and WHERE.
+
+\begin{verbatim}
+SELECT COUNT(code)
+FROM countries
+WHERE continent = 'Oceania';
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{2/3}
+
+\begin{itemize}
+\tightlist
+\item
+  Complete an inner join with \texttt{countries\ AS\ c1} on the left and
+  \texttt{currencies\ AS\ c2} on the right to get the different
+  currencies used in the countries of Oceania.\\
+\item
+  Match \texttt{ON} the \texttt{code} field in the two tables.\\
+\item
+  Include the country \texttt{code}, country \texttt{name}, and
+  \texttt{basic\_unit\ AS\ currency}.
+\end{itemize}
+
+Observe the query result and make note of how many different countries
+are listed here.
+
+\begin{verbatim}
+SELECT c1.code,c1.name,c2.basic_unit AS currency
+FROM countries AS c1
+INNER JOIN currencies AS c2
+USING(code)
+WHERE continent = 'Oceania';
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{3/3}\\
+Note that not all countries in Oceania were listed in the resulting
+inner join with currencies. Use an anti-join to determine which
+countries were not included!
+
+\begin{itemize}
+\tightlist
+\item
+  Use \texttt{NOT\ IN} and \texttt{(SELECT\ code\ FROM\ currencies)} as
+  a subquery to get the country code and country name for the Oceanian
+  countries that are not included in the \texttt{currencies} table.
+\end{itemize}
+
+\begin{verbatim}
+SELECT code,name
+FROM countries 
+WHERE continent = 'Oceania'
+  AND code NOT IN
+    (SELECT code 
+     FROM currencies);
+\end{verbatim}
+
+\hypertarget{set-theory-challenge}{%
+\subsubsection{53. Set theory challenge}\label{set-theory-challenge}}
+
+Your task here will be to incorporate two of
+\texttt{UNION}/\texttt{UNION\ ALL}/\texttt{INTERSECT}/\texttt{EXCEPT} to
+solve a challenge involving three tables. In addition, you will use a
+subquery as you have in the last two exercises!
+
+\textbf{Instructions}\\
+* Identify the country codes that are included in either
+\texttt{economies} or \texttt{currencies} but not in
+\texttt{populations}.\\
+* Use that result to determine the names of cities in the countries that
+match the specification in the previous instruction.
+
+\begin{verbatim}
+SELECT c1.name
+FROM countries AS c1
+  WHERE code IN
+  (SELECT e.code
+   FROM economies AS e
+   AND
+   SELECT c2.code
+   FROM currencies AS c2
+   NOT
+   SELECT p.country_code
+   FROM populations)
+\end{verbatim}
+
+The above is wrong. To select, use union and except in the subquery.
+
+\begin{verbatim}
+-- Select the city name
+SELECT name
+  -- Alias the table where city name resides
+  FROM cities AS c1
+  -- Choose only records matching the result of multiple set theory clauses
+  WHERE country_code IN
+(
+    -- Select appropriate field from economies AS e
+    SELECT e.code
+    FROM economies AS e
+    -- Get all additional (unique) values of the field from currencies AS c2   
+    UNION
+    SELECT c2.code
+    FROM currencies AS c2
+    -- Exclude those appearing in populations AS p  
+    EXCEPT
+    SELECT p.country_code
+    FROM populations AS p
+);
+\end{verbatim}
+
+\hypertarget{section-4-subqueries}{%
+\subsection{SECTION 4: Subqueries}\label{section-4-subqueries}}
+
+\hypertarget{subqueries-inside-where-and-select-clauses}{%
+\subsubsection{54. Subqueries inside WHERE and SELECT
+clauses}\label{subqueries-inside-where-and-select-clauses}}
+
+\textbf{Asian countries below average \texttt{fert\_rate}}
+
+\begin{verbatim}
+SELECT name, fert_rate
+FROM states
+WHERE continent = 'Asia'
+  AND fert_rate < 
+    (SELECT AVG(fert_rate)
+    FROM states);
+\end{verbatim}
+
+\textbf{Subqueries inside SELECT clausess - setup}
+
+\begin{verbatim}
+SELECT DISTINCT continent,
+  (SELECT COUNT(*)
+   FROM states
+   WHERE prime_ministers.continent = states.continent) AS countries
+FROM prime_ministers;
+\end{verbatim}
+
+\hypertarget{subquery-inside-where}{%
+\subsubsection{55. Subquery inside where}\label{subquery-inside-where}}
+
+You'll now try to figure out which countries had high average life
+expectancies (at the country level) in 2015.
+
+\textbf{Instructions} \textbf{1/2}\\
+Begin by calculating the average life expectancy across all countries
+for 2015.
+
+\begin{verbatim}
+SELECT AVG(life_expectancy)
+FROM populations
+WHERE year = 2015;
+\end{verbatim}
+
+\textbf{Instructions} \textbf{2/2}\\
+Recall that you can use SQL to do calculations for you. Suppose we
+wanted only records that were above \texttt{1.15\ *\ 100} in terms of
+life expectancy for 2015:
+
+\begin{verbatim}
+SELECT *
+  FROM populations
+WHERE life_expectancy > 1.15 * 100
+  AND year = 2015;
+\end{verbatim}
+
+Select all fields from \texttt{populations} with records corresponding
+to larger than 1.15 times the average you calculated in the first task
+for 2015. In other words, change the \texttt{100} in the example above
+with a subquery.
+
+\begin{verbatim}
+-- Select fields
+SELECT *
+  -- From populations
+FROM populations
+-- Where life_expectancy is greater than
+WHERE Life_expectancy >1.15 * 
+(SELECT AVG(life_expectancy)
+FROM populations
+WHERE year = 2015) 
+AND year = 2015;
+\end{verbatim}
+
+\hypertarget{subquery-inside-where-2}{%
+\subsubsection{56. Subquery inside where
+(2)}\label{subquery-inside-where-2}}
+
+Use your knowledge of subqueries in \texttt{WHERE} to get the urban area
+population for only capital cities.
+
+\textbf{Instructions}
+
+\begin{itemize}
+\tightlist
+\item
+  Make use of the \texttt{capital} field in the \texttt{countries} table
+  in your subquery.\\
+\item
+  Select the city name, country code, and urban area population fields.
+\end{itemize}
+
+\begin{verbatim}
+SELECT cities.name,countries.code,urbanarea_pop
+FROM cities
+WHERE cities.name IN (
+SELECT countries.capital
+FROM countries
+)
+ORDER BY urbanarea_pop DESC;
+\end{verbatim}
+
+\hypertarget{subquery-inside-select}{%
+\subsubsection{57. Subquery inside
+select}\label{subquery-inside-select}}
+
+This exercise is using either join or subquery to write queries.
+
+You have seen previously how to use \texttt{GROUP\ BY} with aggregate
+functions and an inner join to get summarized information from multiple
+tables.
+
+The code given in the first query selects the top nine countries in
+terms of number of cities appearing in the cities` table. Recall that
+this corresponds to the most populous cities in the world. Your task
+will be to convert the second query to get the same result as the
+provided code.
+
+\textbf{Initial code:}
+
+\begin{verbatim}
+SELECT countries.name AS country, COUNT(*) AS cities_num
+  FROM cities
+    INNER JOIN countries
+    ON countries.code = cities.country_code
+GROUP BY country
+ORDER BY cities_num DESC, country
+LIMIT 9;
+\end{verbatim}
+
+\textbf{Transformation}
+
+\begin{verbatim}
+SELECT countries.name AS country, (
+SELECT COUNT(cities.name)
+FROM cities
+WHERE countries.code = cities.country_code) AS cities_num
+FROM countries
+ORDER BY cities_num DESC, country
+LIMIT 9;
+\end{verbatim}
+
+\hypertarget{subquery-inside-from-clause}{%
+\subsubsection{58. Subquery inside FROM
+clause}\label{subquery-inside-from-clause}}
+
+\textbf{Example}
+
+\begin{verbatim}
+SELECT DISTINCT monarchs.continent,subquery.max_perc
+FROM monarchs,
+  (SELECT continent,MAX(women_parli_perc) AS max_perc
+  FROM states
+  GROUP BY continent) AS subquery
+WHERE monarchs.continent = subquery.continent
+ORDER BY continent;
+\end{verbatim}
+
+\hypertarget{subquery-inside-from}{%
+\subsubsection{59. Subquery inside from}\label{subquery-inside-from}}
+
+The last type of subquery you will work with is one inside of FROM.
+
+You will use this to determine the number of languages spoken for each
+country, identified by the country's local name! (Note this may be
+different than the name field and is stored in the local\_name field.)
+
+\textbf{Instructions}\\
+\textbf{1/2}
+
+\begin{itemize}
+\tightlist
+\item
+  Begin by determining for each country code how many \texttt{languages}
+  are listed in the languages table using \texttt{SELECT},
+  \texttt{FROM}, and \texttt{GROUP\ BY}.\\
+\item
+  Alias the aggregated field as \texttt{lang\_num}.
+\end{itemize}
+
+My version here, which is wrong because I forgot to include code to
+match, where condition\ldots{}
+
+\begin{verbatim}
+SELECT code,name, subquery.num AS lang_num
+FROM languages, 
+  (SELECT COUNT(name) AS num
+   FROM languages
+   GROUP BY code) AS subquery;
+\end{verbatim}
+
+Correct version:
+
+\begin{verbatim}
+-- Select fields
+SELECT countries.local_name,subquery.lang_num
+  -- From countries
+  FROM countries,
+    -- Subquery (alias as subquery)
+    (SELECT code, COUNT(*) AS lang_num
+     FROM languages
+     GROUP BY code) AS subquery
+  -- Where codes match
+  WHERE countries.code = subquery.code
+-- Order by descending number of languages
+  ORDER BY lang_num DESC;
+\end{verbatim}
+
+\hypertarget{advanced-subquery}{%
+\subsubsection{60. Advanced Subquery}\label{advanced-subquery}}
+
+You can also nest multiple subqueries to answer even more specific
+questions.
+
+In this exercise, for each of the six continents listed in 2015, you'll
+identify which country had the maximum inflation rate, and how high it
+was, using multiple subqueries. The table result of your final query
+should look something like the following, where anything between
+\textless{} \textgreater{} will be filled in with appropriate values:
+
+\begin{verbatim}
+name      |    continent
+\end{verbatim}
+
+------------- \textbar{} ----------------\\
+\textbar{} North America\\
+\textbar{} Africa\\
+\textbar{} Oceania\\
+\textbar{} Europe
+
+Again, there are multiple ways to get to this solution using only joins,
+but the focus here is on showing you an introduction into advanced
+subqueries.
+
+\textbf{Instructions}\\
+\textbf{1/3}
+
+\begin{itemize}
+\tightlist
+\item
+  Create an INNER JOIN with countries on the left and economies on the
+  right with USING, without aliasing your tables or columns.\\
+\item
+  Retrieve the country's name, continent, and inflation rate for 2015.
+\end{itemize}
+
+\begin{verbatim}
+SELECT countries.name,countries.continent,economies.inflation_rate
+FROM countries
+INNER JOIN economies
+USING(CODE)
+WHERE year = 2015;
+\end{verbatim}
+
+\textbf{Instructions}\\
+\textbf{2/3}
+
+Select the maximum inflation rate in 2015 AS max\_inf grouped by
+continent using the previous step's query as a subquery in the FROM
+clause.
+
+\begin{itemize}
+\tightlist
+\item
+  Thus, in your subquery you should:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Create an inner join with \texttt{countries} on the left and
+    \texttt{economies} on the right with \texttt{USING} (without
+    aliasing your tables or columns).\\
+  \item
+    Retrieve the country name, continent, and inflation rate for 2015.\\
+  \item
+    Alias the subquery as \texttt{subquery}.
+  \end{itemize}
+\end{itemize}
+
+This will result in the six maximum inflation rates in 2015 for the six
+continents as one field table. Make sure to not include
+\texttt{continent} in the outer \texttt{SELECT} statement.
+
+\hypertarget{summary-differences-between-union-and-joins}{%
+\subsubsection{Summary: Differences Between Union and
+Joins}\label{summary-differences-between-union-and-joins}}
+
+\textbf{Join}
+
+\begin{itemize}
+\tightlist
+\item
+  Join combines data from many tables based on a matched condition
+  between them.
+\item
+  It combines data into new columns.
+\item
+  Number of columns selected from each table may not be the same.
+\item
+  Datatypes of corresponding columns selected from each table can be
+  different.
+\item
+  It may not return distinct columns.
+\end{itemize}
+
+\textbf{Union}
+
+\begin{itemize}
+\tightlist
+\item
+  SQL combines the result-set of two or more SELECT statements.
+\item
+  It combines data into new rows.
+\item
+  Number of columns selected from each table should be same.
+\item
+  Datatypes of corresponding columns selected from each table should be
+  same.
+\item
+  It returns distinct rows.
+\end{itemize}
+
+\end{document}

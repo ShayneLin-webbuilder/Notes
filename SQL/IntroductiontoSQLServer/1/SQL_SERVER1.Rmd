@@ -1,0 +1,17 @@
+---
+title: "Introduction to SQL SERVER"
+author: "Hongjie Lin"
+output: html_document
+---
+
+# Part 1 - Selection Box  
+
+### 1. Intro.  
+
+**SQL in Full Name**  
+SQL stands for Structured Query Language  
+
+**SQL Server & Transact SQL**  
+
+* Relational database system developed by Microsoft  
+* Transact-SQL (T-SQL) - Microsoft's implementation of SQL, with additional functionality  

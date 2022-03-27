@@ -1,0 +1,3263 @@
+
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+# Part 1 - Rsqldf Setup
+### 1. Load Required Packages  
+```
+install.packages("sqldf")  
+library("sqldf")  
+library(readxl)  # only if reading excel xlsx file.
+```
+
+### 2. Importing Data to Environment  
+```
+orders <- read_excel("/Users/shayne_lin/Desktop/work experiennce/UCSB/PSTAT10/LunchCost/orders.xlsx")  
+```
+  
+### 3. Examples from sqldf package  
+```
+name_counts_emponly  <- sqldf("SELECT firstname, COUNT(firstname) as occurances 
+                              FROM employees 
+                              WHERE firstname != 'rudi' 
+                              GROUP BY firstname")
+```
+
+---------------------------------------------------------
+
+# PART 2 - SQL Full Tutorial
+## SECTION 1: Selecting Columns
+
+### 4. Selcting Multiple Columns 
+      To select multiple columns from a table, simply separate the column names with **commas**
+    
+
+### 5. Select All Columns From a Table   
+Typing out every column name would be a pain, so there's a handy shortcut: "SELECT *":    
+      
+``` 
+  SELECT * 
+  FROM people;
+```
+* However, it's not suitable for big tables  
+
+### 6. Return a Certain Number of Results    
+      you can use the LIMIT keyword to limit the number of rows returned:  
+      
+```
+  SELECT *
+  FROM people
+  LIMIT 10;
+```
+**Instructions:**  
+
+ Get the title, release year and country for every film.  
+    
+```
+  SELECT title,release_year,country
+  FROM films;
+```
+ Get all columns from the films table.
+
+```
+  SELECT *
+  FROM films;
+
+```
+
+### 7. SELECT DISTINCT  
+
+
+If you want to select all the unique values from a column, you can use the **DISTINCT** keyword.
+This might be useful if, for example, you're interested in knowing which languages are represented in the films table:  
+
+```
+  SELECT DISTINCT language
+  FROM films;
+```
+**Instructions:**  x
+
+Get all the unique countries represented in the films table.
+
+```
+  SELECT DISTINCT country
+  FROM films;
+```
+
+### Added: SELECT TOP()  
+Similar to LIMIT, but we can specify a percentable of rows return using `TOP N PERCENT`  
+
+```
+-- Return 5 rows
+SELECT TOP(5) artist  
+FROM artists;
+
+-- Return top 5% of rows  
+SELECT TOP(5) PERCENT artist
+FROM artists
+
+//Here artist could be *;
+```
+Use TOP to change the existing query so that only the first 50 rows are returned.  
+
+```
+SELECT TOP (50) points
+FROM eurovision;
+
+```
+
+This time, return only half the rows using 'TOP', using the same shortcut as before to return all columns.  
+
+```
+SELECT TOP (50) PERCENT *
+FROM eurovision;
+  
+```
+
+### 8. LEARNING TO COUNT  
+
+What if you want to count the number of employees in your employees table? The **COUNT( )** function lets you do this by returning the number of rows in one or more columns.  
+
+For example, this code gives the number of rows in the people table:  
+
+```
+  SELECT COUNT(*)
+  FROM people;
+```
+
+### 9. Practice with COUNT  
+if you want to count the number of non-missing values in a particular column, you can call **COUNT( )** on just that column. Count returns with non-missing values;  
+
+For example, to count the number of birth dates present in the people table:  
+
+```
+  SELECT COUNT(birthdate)
+  FROM people;
+```  
+It's also common to combine **COUNT( )** with **DISTINCT** to count the number of distinct values in a column.
+
+```
+  SELECT COUNT(DISTINCT birthdate)
+  FROM peoplesql
+```
+**Instructions:**  
+Count the number of *rows* in the people table.  
+
+```
+  SELECT COUNT(*)
+  FROM people;
+```
+Count the number of (non-missing) birth dates in the people table.
+
+```
+  SELECT COUNT(birthdate)
+  FROM people;
+```
+Count the number of unique birth dates in the people table.
+
+```
+  SELECT COUNT(DISTINCT birthdate)
+  FROM people;
+```
+
+## SECTION 2: Filtering Rows
+
+### 10. WHERE AND
+You can build up your WHERE queries by combining multiple conditions with the AND keyword:
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year > 1994
+  AND release_year < 2000;
+```
+OR, you can have different limitations for different fields.  And You can add as many AND conditions as you need!
+```
+  SELECT *
+  FROM films
+  WHERE release_year > 2000
+  AND release_year < 2010
+  AND language = 'Spanish'
+```
+
+**WHERE Syntax**  
+
+1. Where can be used to filter `date` data type:  
+WHERE event_date = `2012-01-02`  
+
+2. WHERE for non-equality:  
+WHERE total <> 10;  
+
+### 11. WHERE and OR 
+What if you want to select rows based on multiple conditions where some but not all of the conditions need to be met? For this, SQL has the OR operator.  
+
+For example, the following returns all films released in either 1994 or 2000:  
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year = 1994
+  OR release_year = 2000;
+```
+Note that you need to specify the column for every OR condition, so the following is invalid:  
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year = 1994 OR 2000;
+```
+
+When combining AND and OR, be sure to enclose the individual clauses in parentheses, like so:  
+
+```
+  SELECT title, release_year
+  FROM films
+  WHERE (release_year >= 1990 AND release_year < 2000)
+  AND (language = 'French' OR language = 'Spanish')
+  AND gross > 2000000;
+```
+Otherwise, due to SQL's precedence rules, you may not get the results you're expecting!  
+
+**Whild WHERE-OR Clasues**  
+
+Sample failure:  
+
+```
+// Failing samples: 
+
+SELECT *
+FROM songlist
+WHERE 
+  artist = `Green Day`
+  AND release_year = 1994
+  OR release_year > 2000;
+  
+//in fact, it is divided in two separate functions://  
+1. SELECT *
+   FROM songlist
+   WHERE 
+    artist = `Green Day`
+    AND release_year = 1994;
+OR 
+2. SELECT *
+   FROM songlist
+   WHERE 
+    release_year > 2000;
+```
+Here's a rewrite of it.  
+
+```
+SELECT *
+FROM songlist
+WHERE artist = `Green day`
+AND (release_year > 1994 OR release_year > 2000);
+
+Another way of writing the query:
+
+SELECT song
+FROM songlist
+WHERE (
+  artist = `Green Day`
+  AND release_year = 1994
+)
+OR (
+  artist = `Green Day`
+  AND release_year > 2000
+);
+```
+
+### 12. WHERE IN   
+WHERE is very useful for filtering results. However, if you want to filter based on many conditions, WHERE can get unwieldy. For example:  
+
+```
+  SELECT name
+  FROM kids
+  WHERE age = 2
+  OR age = 4
+  OR age = 6
+  OR age = 8
+  OR age = 10;
+```  
+So, the *IN* operator will allow you to specify multiple values in a WHERE clause, making it easier and quicker to specify multiple OR conditions!  
+
+```
+  SELECT name
+  FROM kids
+  WHERE age IN (2, 4, 6, 8, 10);
+```
+
+
+### 13. BETWEEN  
+As you've learned, you can use the following query to get titles of all films released in and between 1994 and 2000:
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year >= 1994
+  AND release_year <= 2000;
+```
+
+Checking for ranges like this is very common, so in SQL the BETWEEN keyword provides a useful shorthand for filtering values within a specified range. This query is equivalent to the one above:  
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year
+  BETWEEN 1994 AND 2000;
+```
+
+It's important to remember that BETWEEN is inclusive, meaning the beginning and end values are included in the results!
+
+**WHERE for NOT BETWEEN**  
+
+```
+SELECT customer_id, total
+FROM invoice
+WHERE total NOT BETWEEN 20 AND 30;  
+```
+### 14. BETWEEN & AND & OR 
+Similar to the WHERE clause, the BETWEEN clause can be used with multiple AND and OR operators, so you can build up your queries and make them even more powerful! Things to note: BETWEEN AND is an inclusive function. Here's an example:
+
+```
+  SELECT title, release_year
+  FROM films
+  WHERE release_year BETWEEN 1990 AND 2000
+  AND budget > 100000000
+  AND (language = 'Spanish' OR language= 'French');
+```
+### 15. Introduction to NULL and IS NULL   
+In SQL, NULL represents a missing or unknown value. You can check for NULL values using the expression IS NULL. For example, to count the number of missing birth dates in the people table:  
+
+```
+
+  FROM people
+  WHERE birthdate IS NULL;
+```
+
+As you can see, IS NULL is useful when combined with WHERE to figure out what data you're missing.
+
+Sometimes, you'll want to filter out missing values so you only get results which are not NULL. To do this, you can use the IS NOT NULL operator.  For example, this query gives the names of all people whose birth dates are not missing in the people table.  
+
+```
+  SELECT name
+  FROM people
+  WHERE birthdate IS NOT NULL;
+```   
+
+### 16. LIKE and NOT LIKE  
+
+As you've seen, the WHERE clause can be used to filter text data. However, so far you've only been able to filter by specifying the exact text you're interested in. In the real world, often you'll want to search for a pattern rather than a specific text string.  
+
+In SQL, the LIKE operator can be used in a WHERE clause to search for a pattern in a column. To accomplish this, you use something called a wildcard as a placeholder for some other values. There are two wildcards you can use with LIKE:  
+
+The % wildcard will match zero, one, or many characters in text. For example, the following query matches companies like 'Data', 'DataC' 'DataCamp', 'DataMind', and so on:  
+
+```
+  SELECT name
+  FROM companies
+  WHERE name LIKE 'Data%';
+```
+The _ wildcard will match a single character. For example, the following query matches companies like 'DataCamp', 'DataComp', and so on:  
+
+```
+  SELECT name
+  FROM companies
+  WHERE name LIKE 'DataC_mp';
+```
+You can also use the **NOT LIKE** operator to find records that don't match the pattern you specify.  
+
+```
+  SELECT name
+  FROM people
+  WHERE name NOT LIKE 'A%';
+```   
+
+```
+SELECT column1, column2
+FROM table_name
+WHERE condition1 OR condition2 OR condition3
+```
+## ****Addition: Strings****    
+
+**SYNTAX**   
+
+Len() for character  
+
+```
+SELECT
+  description,
+  LEN(description) AS description_length
+FROM grid;
+```
+
+LEFT(character, value) for extracting character  
+
+```
+SELECT
+  description,
+  LEFT(description, 20) AS first_20_left
+FROM grid;
+```
+
+Right(character, value) for extracting character  
+
+```
+SELECT 
+  description,
+  RIGHT(description,20) AS last_20
+FROM grid;
+```
+
+CHARINDEX('_', url) for char_location  
+
+Here's the table result for the following:  
+
+char_location   |  url
+----------------|------------------------------------
+34                datacamp.com/courses/introduction_
+
+```
+SELECT 
+  CHARINDEX('_',url) AS char_location,
+  url
+FROM courses;
+```
+SUBSTRING for extracting characters from the middle of character.  
+
+Here's the resulted table:  
+
+target_section url 
+datacamp.com  https//www.datacamp.com/courses  
+
+```
+SELECT
+  SUBSTRING(url,12,12) AS target_section,
+  url
+FROM courses;
+```
+REPLACE for changing the character of a character to another table.  
+
+Here's the resulted table:  
+
+replace_with hypen|
+------------------|
+datacamp.com/courses/introduction-  
+
+```
+SELECT
+  TOP(5) REPLACE(url, '_', '-') AS replace_with_hyphen
+FROM courses;
+```
+
+**Practice**  
+
+CHARINDEX(),LEN(),SUBSTRING(),TOP(), WHERE(),LIKE(%Weather%).practices.  
+
+```
+-- Complete the substring function to begin extracting from the correct character in the description column
+SELECT TOP (10)
+  description, 
+  CHARINDEX('Weather', description) AS start_of_string, 
+  LEN ('Weather') AS length_of_string, 
+  SUBSTRING(
+    description, 
+    15, 
+    LEN(description)
+  ) AS additional_description 
+FROM 
+  grid
+WHERE description LIKE '%Weather%';
+```
+
+You can use CHARINDEX to find a specific character or pattern within a column. Edit the query to return the CHARINDEX of the string 'Weather' whenever it appears within the description column.  
+
+
+
+
+## SECTION 3: Aggregate functions  
+Often, you will want to perform some calculation on the data in a database. SQL provides a few functions, called aggregate functions, to help you out with this.  
+
+For example, 
+
+
+```
+  SELECT AVG(budget)
+  FROM films;
+```
+gives you the average value from the budget column of the films table. Similarly, the MAX() function returns the highest budget:  
+
+```
+  SELECT MAX(budget)
+  FROM films;
+```
+The SUM() function returns the result of adding up the numeric values in a column:  
+
+```
+  SELECT SUM(budget)
+  FROM films;
+```
+You can probably guess what the MIN() function does!  
+
+However, when you want to find AVG of a calculation, it is not possible. You can find the average of an object first, then do the calculation:   
+
+**ROUND FUNCTION with SQL**  
+
+Syntax:  
+ROUND(x,integer)  
+where integer means the number of decimals for the result  
+
+```
+SELECT ROUND(SUM(debt)/1000000,2) AS total_debt
+FROM international_debt;
+```
+
+Example:  Get the average duration in hours for all films, aliased as avg_duration_hours.  
+
+```
+  SELECT AVG(duration/60.0) AS avg_duration_hours
+  FROM films;
+```
+
+This is wrong. Here's the correct version:  
+
+```
+  SELECT AVG(duration)/60.0 AS avg_duration_hours
+  FROM films;
+```
+
+### 17. Combining aggregate functions with WHERE    
+Aggregate functions can be combined with the WHERE clause to gain further insights from your data.  
+
+For example, to get the total budget of movies made in the year 2010 or later:  
+
+```
+  SELECT SUM(budget)
+  FROM films
+  WHERE release_year >= 2010;
+```
+
+### 18. A NOTE on ARITHMATIC   
+In addition to using aggregate functions, you can perform basic arithmetic with symbols like +, -, *, and /.  
+
+So, for example, this gives a result of 12:  
+
+```
+  SELECT (4 * 3);
+```
+However, the following gives a result of 1:
+
+```
+  SELECT (4 / 3);
+```   
+What's going on here?  
+
+SQL assumes that if you divide an integer by an integer, you want to get an integer back. So be careful when dividing!  
+
+If you want more precision when dividing, you can add decimal places to your numbers. For example,  
+
+```
+  SELECT (4.0 / 3.0) AS result;
+```
+gives you the result you would expect: 1.333.
+
+
+### 19. It's AS simple AS aliasing  
+You may have noticed in the first exercise of this chapter that the column name of your result was just the name of the function you used. For example,  
+
+```
+  SELECT MAX(budget)
+  FROM films;
+```
+
+gives you a result with one column, named max. But what if you use two functions like this?  
+
+```
+  SELECT MAX(budget), MAX(duration)
+  FROM films;
+```
+
+Well, then you'd have two columns named max, which isn't very useful!  
+
+To avoid situations like this, SQL allows you to do something called aliasing. Aliasing simply means you assign a temporary name to something. To alias, you use the AS keyword, which you've already seen earlier in this course.  
+  
+For example, in the above example we could use aliases to make the result clearer:  
+
+```
+  SELECT MAX(budget) AS max_budget,
+         MAX(duration) AS max_duration
+  FROM films;
+```
+With calculations:
+
+```
+  SELECT title, (gross-budget) AS net_profit
+  FROM films;
+```
+
+### 20. MORE ALIASING    
+Practice:  
+Get the percentage of people who are no longer alive. Alias the result as percentage_dead. Remember to use 100.0 and not 100!
+
+```
+  SELECT COUNT(deathdate) * 100.0 / COUNT(*) AS percentage_dead
+  FROM people;
+```
+Because count only returns variables that are not null. If you count something, you should not also specify that the thing is not null, which will cause mistakes.  
+
+Get the number of years between the newest film and oldest film. Alias the result as difference.  
+
+```
+  SELECT MAX(release_year)-MIN(release_year) AS difference
+  FROM films;
+```
+Get the number of decades the films table covers. Alias the result as number_of_decades. The top half of your fraction should be enclosed in parentheses.  
+```
+  SELECT (MAX(release_year) - MIN(release_year))/10 AS number_of_decades
+  FROM films;
+``` 
+## SECTION 4: Sorting and Grouping  
+
+### 21. ORDER BY    
+In SQL, the ORDER BY keyword is used to sort results in ascending or descending order according to the values of one or more columns.  
+
+By default ORDER BY will sort in ascending order. If you want to sort the results in descending order, you can use the DESC keyword. For example,  
+
+```
+  SELECT title
+  FROM films
+  ORDER BY release_year DESC;
+```
+
+### 22. Sorting Single Columns Practice    
+
+Get the title of films released in 2000 or 2012, in the order they were released.  
+
+```
+  SELECT title
+  FROM films
+  WHERE release_year in (2000, 2012)
+  ORDER BY release_year;
+```
+
+### 23. Sorting Multiple Columns Practice  
+
+ORDER BY can also be used to sort on multiple columns. It will sort by the first column specified, then sort by the next, then the next, and so on. For example,  
+
+```
+  SELECT birthdate, name
+  FROM people
+  ORDER BY birthdate, name;
+```
+sorts on birth dates first (oldest to newest) and then sorts on the names in alphabetical order. The order of columns is important!Remember, to specify multiple columns you separate the column names with a comma.
+
+
+### 24. GROUP BY    
+Now you know how to sort results! Often you'll need to aggregate results. For example, you might want to count the number of male and female employees in your company. Here, what you want is to group all the males together and count them, and group all the females together and count them. In SQL, GROUP BY allows you to group a result by one or more columns, like so:  
+
+```
+  SELECT sex, count(*)
+  FROM employees
+  GROUP BY sex;
+```
+
+This might give, for example:  
+
+sex	    |  count
+--------|---------
+male	  |15
+female	|19
+
+Commonly, GROUP BY is used with aggregate functions like COUNT() or MAX(). Note that GROUP BY always goes after the FROM clause!
+
+### 25. GROUP BY practice    
+As you've just seen, combining aggregate functions with GROUP BY can yield some powerful results!  
+
+A word of warning: SQL will return an error if you try to SELECT a field that is not in your GROUP BY clause without using it to calculate some kind of value about the entire group.  
+
+Note that you can combine GROUP BY with ORDER BY to group your results, calculate something about them, and then order your results. For example,  
+
+```
+  SELECT sex, count(*)
+  FROM employees
+  GROUP BY sex
+  ORDER BY count DESC;
+```
+might return something like:  
+
+sex	   |count
+-------|-------
+female |  19
+male	 |  15
+  
+because there are more females at our company than males. Note also that ORDER BY always goes after GROUP BY.
+
+**EXERCISES:**    
+1.Get the release year and count of films released in each year.  
+
+```
+  SELECT release_year,COUNT(id)
+  FROM films
+  GROUP BY release_year;
+```
+2.Get the release year and average duration of all films, grouped by release year.  
+
+```
+  SELECT release_year,AVG(duration)
+  FROM films
+  GROUP BY release_year;
+```
+3.Get the IMDB score and count of film reviews grouped by IMDB score in the reviews table.
+
+```
+  SELECT imdb_score,COUNT(id)
+  FROM reviews
+  GROUP BY imdb_score;
+```
+
+### 26. GROUP BY practice (2)    
+
+Now practice your new skills by combining GROUP BY and ORDER BY with some more aggregate functions!  
+
+Make sure to always put the ORDER BY clause at the end of your query. You can't sort values that you haven't calculated yet!  
+
+Get the release year, country, and highest budget spent making a film for each year, for each country. Sort your results by release year and country.   
+
+```
+  SELECT release_year,country,MAX(budget)
+  FROM films
+  GROUP BY release_year,country
+  ORDER BY release_year,country;
+```
+
+### 27. WHERE and AGGREGATE functions:AVG,MAX,MIN,SUM,GROUP BY cannot be together    
+In SQL, aggregate functions can't be used in WHERE clauses. For example, the following query is *invalid*:  
+
+```
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  WHERE COUNT(title) > 10;
+```
+This means that if you want to filter based on the result of an aggregate function, you need another way! That's where the HAVING clause comes in. For example,
+
+```
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  HAVING COUNT(title) > 10;
+```
+
+shows only those years in which more than 10 films were released.  
+
+In how many different years were more than 200 movies released?  
+
+```
+  SELECT release_year
+  FROM films
+  GROUP BY release_year
+  HAVING COUNT(title) > 200;
+```
+Advanced example for `GROUP BY` and `HAVING`,  
+
+```
+SELECT 
+  SUM(demand_loss_mw) AS lost_demand,
+  description
+FROM grid
+WHERE 
+  description LIKE '%storm'
+  AND demand_loss_mw is NOT NULL
+GROUP BY description
+HAVING SUM(demand_loss_mw) > 1000;
+```
+
+```
+SELECT 
+  country, 
+  COUNT (country) AS country_count, 
+  AVG (place) AS avg_place, 
+  AVG (points) AS avg_points, 
+  MIN (points) AS min_points, 
+  MAX (points) AS max_points 
+FROM 
+  eurovision 
+GROUP BY 
+  country 
+  -- The country column should only contain those with a count greater than 5
+  -- Arrange columns in the correct order
+HAVING COUNT(country) > 5
+ORDER BY 
+  avg_place, 
+  avg_points;
+```
+
+**Summary**  
+GROUP BY splits the data up into combinations of one or more values.  
+WHERE filters on row values  
+HAVING appears after the GROUP BY clauses can filter on groups or aggregates.  
+
+
+### ****Addition: SQL Exists****  
+
+The SQL EXISTS Operator  
+The `EXISTS` operator is used to test the existence of any record in a subquery.    
+The `EXISTS` operator returns TRUE if the subquery returns one or more records.   
+
+EXISTS Syntax  
+
+```
+SELECT column_name(s)
+FROM table_name
+WHERE EXISTS
+  (SELECT column_name FROM table_name WHERE condition);
+```
+
+**Example**  
+
+```
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price = 22);
+```
+
+### ***Addition: The SQL ANY and ALL Operators***  
+The `ANY` and `ALL` operators allow you to perform a comparison between a single column value and a range of other values.  
+
+**The `ANY` operator:**    
+
+* returns a boolean value as a result  
+* returns TRUE if ANY of the subquery values meet the condition  
+
+`ANY` means that the condition will be true if the operation is true for any of the values in the range.  
+
+**ANY Syntax**    
+
+```
+SELECT column_name(s)
+FROM table_name
+WHERE column_name operator ANY 
+  (SELECT column_name
+  FROM table_name
+  WHERE condition);
+```
+
+**The `ALL` operator:**  
+  
+* returns a boolean value as a result
+* returns TRUE if ALL of the subquery values meet the condition
+* is used with `SELECT`, `WHERE` and `HAVING` statements
+
+
+**ALL Syntax**  
+
+    SELECT ALL column_name(s)
+    FROM table_name
+    WHERE condition;
+
+**ALL Syntax With WHERE or HAVING**  
+
+    SELECT column_name(s)
+    FROM table_name
+    WHERE column_name operator ALL
+      (SELECT column_name
+      FROM table_name
+      WHERE condition);
+
+    SELECT ProductName 
+    FROM Products
+    WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+
+**Difference between and & all**  
+ANY and ALL are all SQL logical operators used in conjunction with sub-query.  
+
+For explanation let us consider a table customers  
+
+customers(Name, Age, Salary)  
+
+This table has instances like (A, 25, 2000), (B, 33, 4000), (C, 23, 8500), (D, 27, 6000), (E, 24, 4150)  
+
+ANY- true if any of the sub-query values meet the condition.  
+Consider a Query : SELECT * FROM customers WHERE Age > ANY( SELECT Age FROM customers WHERE Salary > 5000)  
+
+The sub-query returns 23, 27 i.e, These are the ages for which salary is greater than 5000. Then main query is compared with this, if any of the ages in table is greater than any of the values of sub-query(i.e the ages in table should be either greater than 23 or 27) . Now it returns (A, 25, 2000) (B, 33, 4000) (D, 27, 6000) (E, 24, 4150).  
+
+ALL- true if all of the sub-query values meet the condition.  
+Consider a Query : SELECT * FROM customers WHERE Age > ALL( SELECT Age FROM customers WHERE Salary > 5000)  
+
+The sub-query returns 23, 27 i.e, These are the ages for which salary is greater than 5000. Then main query is compared with this, if any of the ages in table is greater than all of the values of sub-query(i.e the ages in table should be greater than both 23 and 27) . Now it returns(B, 33, 4000) .  
+
+
+
+
+### 28. All together     
+Time to practice using ORDER BY, GROUP BY and HAVING together.  
+
+Now you're going to write a query that returns the average budget and average gross earnings for films in each year after 1990, if the average budget is greater than $60 million.  
+
+```
+  SELECT release_year, AVG(budget) AS avg_budget, AVG(gross) AS avg_gross
+  FROM films
+  GROUP BY release_year
+  HAVING AVG(budget)> 60000000
+  AND release_year > 1990
+  ORDER BY avg_gross DESC;
+```
+
+### 29. All together(2)    
+If you only want to return a certain number of results, you can use the LIMIT keyword to *limit* the number of rows returned   
+
+Get the country, average budget, and average gross take of countries that have made more than 10 films. Order the result by country name, and limit the number of results displayed to 5. You should alias the averages as avg_budget and avg_gross respectively.  
+
+```
+  SELECT country,AVG(budget) AS avg_budget,AVG(gross) AS avg_gross
+  FROM films
+  GROUP BY country
+  HAVING COUNT(title) > 10
+  ORDER BY country
+  LIMIT 5;
+```
+
+
+### 30. A taste of things to more-join example    
+
+
+```
+  SELECT title, imdb_score
+  FROM films
+  JOIN reviews
+  ON films.id = reviews.film_id
+  WHERE title = 'To Kill a Mockingbird';
+```
+
+# PART 3 - JOINING DATA IN SQL
+
+## SECTION 1: Introduction to joins
+
+### 31. Introduction to INNER JOIN    
+Basic frame of inner join:  
+
+```
+  SELECT *
+  FROM left_table
+  INNER JOIN right_table
+  ON left_table.id = right_table.id;
+```
+Or, here's another example for syntax:  
+
+```
+SELECT 
+  table_A.columnX,
+  table_A.columnY,
+  table_B.columnZ
+FROM table_A
+INNER JOIN table_B ON table_A.foreign_key = table_b.primary_key;
+```
+example:  
+
+```
+  SELECT p1.country,p1.continent,prime_minister,president
+  FROM prime_misters AS p1
+  INNER JOIN presidents AS p2
+  ON p1.country = p2.country;
+```
+Now, use inner join to combine *cities* table with *countries* table, alias and joinning on cities.country_code and countries.code.  
+
+```
+  SELECT *
+  FROM cities AS city
+  INNER JOIN countries AS country
+  ON cities.country_code = countries.code;
+
+```  
+
+### 32. INNER JOIN (2)  
+Making alias with inner join's table and inner join's table name;  
+
+```
+  SELECT c1.name AS city, c2.name AS country
+  FROM cities AS c1
+  INNER JOIN countries AS c2
+  ON c1.country_code = c2.code;
+```
+Notice that to select a field in your query that appears in multiple tables, you'll need to identify which table/table alias you're referring to by using a . in your SELECT statement.  
+
+
+Exercise: get data from both the countries and economies tables to examine the inflation rate for both 2010 and 2015.  
+
+```
+  SELECT c.code AS country_code,c.name,e.year,e.inflation_rate
+  FROM countries AS c
+  INNER JOIN economies AS e
+  ON c.code = e.code
+  WHERE e.year IN (2010,2015);
+```
+
+### 33. INNER JOIN- combining more than two tables at once    
+The ability to combine multiple joins in a single query is a powerful feature of SQL, e.g:  
+
+```
+  SELECT *
+  FROM left_table
+  INNER JOIN right_table
+  ON left_table.id = right_table.id
+  INNER JOIN another_table
+  ON left_table.id = another_table.id;
+```
+
+As you can see here it becomes tedious to continually write long table names in joins. This is when it becomes useful to alias each table using the first letter of its name (e.g. countries AS c)!   
+
+Now, for each country, you want to get the country name, its region, the fertility rate, and the unemployment rate for both 2010 and 2015.  
+```
+  SELECT c.code,c.name,c.region,e.year,p.fertility_rate,e.unemployment_rate
+  FROM countries AS c
+  INNER JOIN economies AS e
+  ON c.code = e.code
+  INNER JOIN populations AS p
+  ON c.code = p.country_code
+  WHERE e.year in (2010,2015);
+```
+The above is wrong because of the last statement in inner join. When selecting fields that are in multiple tables, remember to making the connection on multiples. 
+
+explaination:The trouble with doing your last join on c.code = e.code and not also including year is that e.g. the 2010 value for fertility_rate is also paired with the 2015 value for unemployment_rate.
+Fix your previous query: in your last ON clause, use AND to add an additional joining condition. In addition to joining on code in c and e, also join on year in e and p.
+
+```
+  -- Select fields
+  SELECT c.code, name, region, e.year, f rtility_rate, unemployment_rate
+  -- From countries (alias as c)
+  FROM countries AS c
+  -- Join to populations (as p)
+  INNER JOIN populations AS p
+  -- Match on country code
+  ON c.code = p.country_code
+  -- Join to economies (as e)
+  INNER JOIN economies AS e
+  -- Match on country code and year
+  ON c.code = e.code AND e.year = p.year;
+```
+### 34. INNER JOIN with USING      
+
+Inner join with using  
+When joining tables with a common field name, e.g.  
+
+```
+  SELECT *
+  FROM countries
+  INNER JOIN economies
+  ON countries.code = economies.code
+```
+You can use USING as a shortcut:  
+
+```
+  SELECT *
+  FROM countries
+  INNER JOIN economies
+  USING(code)
+```
+### 35. SELF JOIN    
+Self-joins are used to compare values in a field to other values of the same field from within the same table.  
+
+Example:finishing off the self-join on prime_misnisters  
+
+```
+  SELECT p1.country AS country1,p2.country AS country2,p1.continent
+  FROM prime_ministers AS p1
+  INNER JOIN prime_minister AS p2
+  ON p1.continent = p2.continent AND p1.country = p2.country
+  LIMIT 13;
+```
+
+**Instructions**  
+**1/3**  
+
+* Join populations with itself ON country_code.
+
+* Select the country_code from p1 and the size field from both p1 and p2. SQL won't allow same-named fields, so alias p1.size as size2010 and p2.size as size2015.
+
+```
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010,
+         p2.size AS size2015
+  -- From populations (alias as p1)
+  FROM populations AS p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations AS p2
+      -- Match on country code
+      ON  p1.country_code = p2.country_code;
+```
+
+**Instructions**    
+**2/3**   
+
+* Notice from the result that for each *country_code* you have four entries laying out all combinations of 2010 and 2015.
+* Extend the *ON* in your query to include only those records where the *p1.year* (2010) matches with *p2.year - 5* (2015 - 5 = 2010). This will omit the three entries per *country_code* that you aren't interested in.
+* Even though you did not select it from the SELECT, as it is matching two completely same tables, you need to consider replication of data as you apply.
+```
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010,
+         p2.size AS size2015
+  -- From populations (alias as p1)
+  FROM populations as p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations as p2
+      -- Match on country code
+      ON p1.country_code = p2.country_code
+          -- and year (with calculation)
+          AND p1.year = p2.year-5;
+```
+ 
+**Instructions**    
+**3/3**    
+
+* As you just saw, you can also use SQL to calculate values like *p2.year - 5* for you. With two fields like *size2010* and *size2015*, you may want to determine the percentage increase from one field to the next:  
+
+* With two numeric fields  and , the percentage growth from  to  can be calculated as (B-A)/A*100.0  
+
+* Add a new field to *SELECT*, aliased as *growth_perc*, that calculates the percentage population growth from 2010 to 2015 for each country, using *p2.size* and *p1.size*  
+
+```
+  -- Select fields with aliases
+  SELECT p1.country_code,
+         p1.size AS size2010, 
+         p2.size AS size2015,
+         -- Calculate growth_perc
+         ((p2.size - p1.size)/p1.size* 100.0) AS growth_perc
+  -- From populations (alias as p1)
+  FROM populations AS p1
+    -- Join to itself (alias as p2)
+    INNER JOIN populations AS p2
+      -- Match on country code
+      ON p1.country_code = p2.country_code
+          -- and year (with calculation)
+          AND p1.year = p2.year - 5;
+```
+
+### 36. Case when and then    
+Often it's useful to look at a numerical field not as raw data, but instead as being in different categories or groups.  
+
+You can use CASE with WHEN, THEN, ELSE, and END to define a new grouping field.  
+
+   
+     
+**Instructions:**    
+Using the *countries* table, create a new field *AS geosize_group* that groups the countries into three groups:  
+
+* If *surface_area* is greater than 2 million, *geosize_group* is *'large'*.
+* If *surface_area* is greater than 350 thousand but not larger than 2 million, *geosize_group* is *'medium'*.
+* Otherwise, *geosize_group* is *'small'*.
+
+```
+  SELECT name, continent, code, surface_area,
+      -- First case
+      CASE 
+          WHEN surface_area> 2000000 THEN 'large'
+          -- Second case
+          WHEN  surface_area > 350000 THEN 'medium'
+          -- Else clause + end
+          ELSE 'small' 
+          -- Alias name
+          END AS geosize_group
+          -- From table
+          FROM countries;
+```
+
+### 37. INTO to save edited table as a new table   
+The table you created with the added *geosize_group* field has been loaded for you here with the name *countries_plus*. Observe the use of (and the placement of) the *INTO* command to create this *countries_plus* table:  
+
+```
+  SELECT name, continent, code, surface_area,
+      CASE WHEN surface_area > 2000000
+              THEN 'large'
+         WHEN surface_area > 350000
+              THEN 'medium'
+         ELSE 'small' END
+         AS geosize_group
+  INTO countries_plus
+  FROM countries;
+```
+
+You will now explore the relationship between the size of a country in terms of surface area and in terms of population using grouping fields created with *CASE*.
+
+By the end of this exercise, you'll be writing two queries back-to-back in a single script. 
+
+**Instructions**  
+**1/3**  
+Using the *populations* table focused only for the *year* 2015, create a new field aliased as *popsize_group* to organize population *size* into
+
+* *'large'* (> 50 million),  
+* *'medium'* (> 1 million), and  
+* *'small'* groups.  
+Select only the country code, population size, and this new *popsize_group* as fields.  
+
+```
+  SELECT country_code,size,
+    CASE WHEN size > 50000000
+      THEN 'large'
+         WHEN size > 1000000
+      THEN 'medium'
+         ELSE 'small' 
+      END AS popsize_group
+  FROM populations
+  WHERE year = 2015;
+
+```
+
+**Instructions**  
+**2/3**    
+* Use *INTO* to save the result of the previous query as *pop_plus*. You can see an example of this in the *countries_plus* code in the assignment text. Make sure to include a *;* at the end of your *WHERE* clause!
+
+* Then, include another query below your first query to display all the records in *pop_plus* using SELECT * FROM pop_plus; so that you generate results and this will display *pop_plus* in the query result.
+
+```
+  SELECT country_code,size,
+      CASE WHEN size > 50000000
+        THEN 'large'
+           WHEN size > 1000000
+        THEN 'medium'
+           ELSE 'small' 
+        END AS popsize_group
+    INTO pop_plus
+    FROM populations
+    WHERE year = 2015;
+    
+  SELECT *
+  FROM pop_plus
+```
+* Keep the first query intact that creates *pop_plus* using *INTO*.
+* Write a query to join *countries_plus AS c* on the left with *pop_plus AS p* on the right matching on the country code fields.
+* Sort the data based on *geosize_group*, in ascending order so that large appears on top.
+* Select the name, continent, geosize_group, and *popsize_group* fields.
+
+```
+  SELECT country_code, size,
+    CASE WHEN size > 50000000
+              THEN 'large'
+         WHEN size > 1000000
+              THEN 'medium'
+         ELSE 'small' END
+         AS popsize_group
+  INTO pop_plus       
+  FROM populations
+  WHERE year = 2015;
+  
+  -- Select fields
+  SELECT name,continent,geosize_group,popsize_group
+  -- From countries_plus (alias as c)
+  FROM countries_plus AS c
+    -- Join to pop_plus (alias as p)
+  INNER JOIN pop_plus AS p
+      -- Match on country code
+    ON p.country_code=c.code
+  -- Order the table    
+  ORDER BY geosize_group;
+```
+
+**Combine case when with order by**  
+The following SQL will order the customers by City. However, if City is NULL, then order by Country:  
+
+```
+SELECT CustomerName, City, Country
+FROM Customers
+ORDER BY
+  (CASE
+     WHEN City IS NULL THEN Country
+     ELSE City
+   END);
+```
+### ****Addition-SQL NULL Functions****  
+
+Background:
+
+```
+SELECT ProductName, UnitPrice * (UnitsInStock + UnitsOnOrder)
+FROM Products;
+```
+Suppose that the "UnitsOnOrder" column is optional, and may contain NULL values. If any of the "UnitsOnOrder" values are NULL, the result will be NULL.
+
+Solutions:  
+
+MySQL:  
+
+The MySQL IFNULL() function lets you return an alternative value if an expression is NULL
+      
+      SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+      FROM Products;
+      
+or, we can use the `COALESCE()` function, like this:
+
+    SELECT ProductName, UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder,0))
+    FROM Products;
+
+For other SQL servers, refer to [w3schools tutorial page][1]   
+
+### ****Addition-SQL Stored Procedures for SQL Server****  
+**What is a stored procedure?**  
+A stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+
+So if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+
+You can also pass parameters to a stored procedure, so that the stored procedure can act based on the parameter value(s) that is passed.
+
+
+**Stored Procedure Syntax**    
+
+```
+CREATE PROCEDURE procedure_name
+AS
+SQL_statement
+GO;
+```
+Execute a Stored Procedure  
+
+```
+EXEC procedure_name;
+```
+
+**Stored Procedure Example**  
+
+```
+CREATE PROCEDURE SelectAllCustomers
+AS
+SELECT * FROM Customers
+Go;
+```
+
+```
+EXEC SelectAllCustomers;
+```
+
+**Stored Procedure With One Parameter**  
+
+```
+CREATE PROCEDURE SelectAllCustomers @City nvachar(30)
+AS
+SELECT * FROM Customers WHERE City = @City
+GO;
+```
+
+```
+EXEC SelectAllCustomers @City = 'London';
+```
+
+**Stored Procedure With Multiple Parameters**  
+
+Setting up multiple parameters is very easy. Just list each parameter and the data type separated by a comma as shown below.
+
+The following SQL statement creates a stored procedure that selects Customers from a particular City with a particular PostalCode from the "Customers" table:
+
+```
+CREATE PROCEDURE SelectAllCustomers @City nvarchar(30), @PostalCode nvarchar(10)
+AS
+SELECT * FROM Customers WHERE City = @City AND PostalCode = @PostalCode
+GO;
+```
+
+```
+EXEC SelectAllCustomers @City = 'London', @PostalCode = 'WA1 1DP';
+```
+
+
+
+## SECTION 2: Outer joins and cross joins  
+Outer joins is reaching out to another table while keeping all of the records of the original table. While inner joins keep only the records IN both tables. Outer joins include (1) Left joins (2) Right joins (3) Full joins. 
+
+The syntax of a LEFT JOIN:
+
+```
+SELECT p1.country, prime_minister, president
+FROM prime_ministers AS p1
+LEFT JOIN presidents AS p2
+ON p1.country = p2.country;
+```
+
+
+### 38. Left Join    
+Combine two datasets together with inner joins and left joins, genenrally, left joins should end up with more variables at the end and inner joins end up with less variable at the end. Why do we need `LEFT` and `RIGHT` joins? One table may not have an exact match in another.   
+
+`LEFT JOIN` (or `RIGHT JOIN`): All rows from the main table plus matches from the joining table.  
+
+```
+  -- Select fields
+  SELECT region, AVG(gdp_percapita) AS avg_gdp
+  -- From countries (alias as c)
+  FROM countries AS c
+    -- Left join with economies (alias as e)
+    LEFT JOIN economies as e
+      -- Match on code fields
+      ON c.code = e.code
+  -- Focus on 2010
+  WHERE year = 2010
+  -- Group by region
+  GROUP BY c.region
+  -- Order by descending avg_gdp
+  ORDER BY avg_gdp DESC;
+
+```
+
+**Left Joins are functionally the same as right joins using reverse, even in multiple tables' combination case.  
+
+```
+  -- convert this code to use RIGHT JOINs instead of LEFT JOINs
+  /*
+  SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+         indep_year, languages.name AS language, percent
+  FROM cities
+    LEFT JOIN countries
+      ON cities.country_code = countries.code
+    LEFT JOIN languages
+      ON countries.code = languages.code
+  ORDER BY city, language;
+  */
+  
+  SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+         indep_year, languages.name AS language, percent
+  FROM languages
+    RIGHT JOIN countries
+      ON countries.code = languages.code
+    RIGHT JOIN cities
+      ON cities.country_code = countries.code
+  ORDER BY city, language;
+```
+
+### 39. Full joins  
+Full joins is a union of the combination of the sets, including both table_1 and table_2 attributes at the same time.  
+
+```
+  SELECT countries.name, code, languages.name AS language
+  -- From languages
+  FROM languages 
+    -- Join to countries
+    FULL JOIN countries
+      -- Match on code
+      USING (code)
+  -- Where countries.name starts with V or is null
+  WHERE countries.name LIKE 'v%' OR countries.name IS NULL
+  -- Order by ascending countries.name
+  ORDER BY countries.name
+```
+
+### 40. CROSSING the rubicon-CROSS JOINS  
+CROSS JOINs create all possibe combinations of two tables. It helps generate all possible values of combinations of the table attributes. For example, table 1 has 3 attributes and table 2 has 3 attributes, together the make the cross joins of 9 attributes, assuming none of the values are the same.  
+
+syntax: 
+
+```
+SELECT 
+FROM 
+CROSS JOIN 
+```
+
+### 41. A table of two cities    
+
+**Instructions**   
+**1/2**   
+
+* Create a *CROSS JOIN* with *cities AS c* on the left and *languages AS l* on the right.
+* Make use of *LIKE* and *Hyder%* to choose Hyderabad in both countries.
+* Select only the city name *AS city* and language name *AS language*  
+
+```
+SELECT c.name AS city,l.name AS language
+FROM cities AS c
+CROSS JOIN languages AS l
+WHERE c.name LIKE 'Hyder%';
+```
+
+### 42. Outer challenge   
+In terms of life expectancy for 2010, determine the names of the lowest five countries and their regions.  
+
+**Instructions**    
+* Select country name AS country, region, and life expectancy AS life_exp.
+* Make sure to use LEFT JOIN, WHERE, ORDER BY, and LIMIT.  
+
+```
+SELECT c.name AS country,c.region,p.life_expectancy AS life_exp
+FROM countries AS c
+LEFT JOIN populations AS p
+ON c.code = p.country_code  
+WHERE p.year = 2010
+ORDER BY life_exp
+LIMIT 5;
+```
+
+-----------------------------------
+## SECTION 3: Set theory clauses   
+  
+  
+### 43. Introduction to Set Theory Venn Theories  
+**Union**  
+Includes only one overlap，which means the table will only include both of the attributes from the tables, but have everything appers only once.  
+**Union All**  
+Includes two overlaps, which means the table will also reveal the duplicates in the combination  
+**Basic Syntax Example for UNION**  
+
+```
+SELECT prime_minister AS leader, country
+FROM prime_ministers
+UNION
+SELECT monarch,country
+FROM monarchs
+ORDER BY country;
+```
+**Note**  
+When you use `UNION` for the tables, make sure that the combined fields should have same type of data. For example, that a character type  cannot be combined with a numeric type.  
+
+**Basic Syntax Example for UNION ALL**
+
+```
+SELECT prime_minister AS leader, country
+FROM prime_ministers
+UNION ALL
+SELECT monarch, country
+FROM monarchs
+ORDER BY country
+LIMIT 10;
+```
+**Intersect**   
+Only includes the overlap once and only the overlap, only include the intersection of two tables.   
+**Except**   
+Only includes one side of the table and exclude the overlap of the two tables.
+
+### 44. Union 
+**Instructions**   
+* Combine the two new tables into one table containing all of the fields in economies2010.  
+* Sort this resulting single table by country code and then by year, both in ascending order.   
+
+```
+SELECT *
+FROM economies2010
+UNION
+SELECT *
+FROM economies2015
+ORDER BY code,year;
+```
+### 45. Union to Count Attributes Occurrences of a field for Multiple Tables(2)  
+`UNION` can also be used to determine all occurrences of a field across multiple tables. Try out this exercise with no starter code.  
+
+**Instructions:**   
+
+* Determine all (non-duplicated) country codes in either the `cities` or the `currencies` table. The result should be a table with only one field called `country_code`.   
+* Sort by `country_code` in alphabetical order.  
+
+```
+SELECT c1.code
+FROM currencies AS c1
+UNION
+SELECT c2.country_code
+FROM cities AS c2
+ORDER BY c2.country_code
+```
+
+### 46. Union all  
+* As you saw, duplicates were removed from the previous two exercises by using `UNION`.
+
+* To include duplicates, you can use `UNION ALL`.  
+
+**Instructions**  
+
+* Determine all combinations (include duplicates) of country code and year that exist in either the `economies or the populations tables. Order by code then year.  
+* The result of the query should only have two columns/fields. Think about how many records this query should result in.  
+* You'll use code very similar to this in your next exercise after the video. Make note of this code after completing it.  
+
+```
+  -- Select fields
+  SELECT code,year
+    -- From economies
+    FROM economies
+  	-- Set theory clause
+  	UNION ALL
+  -- Select fields
+  SELECT country_code, year
+    -- From populations
+    FROM populations
+  -- Order by code, year
+  ORDER BY code, year;
+```
+
+### ****Addition-Creating new column names for final results in UNION and UNION ALL****  
+
+```
+SELECT
+  album_id AS ALBUM_ID,
+  title AS ALBUM_TITLE,
+  artist_id AS ARTIST_ID
+FROM album
+WHERE artist_id IN(1,3)
+UNION ALL
+SELECT
+  album_id AS ALBUM_ID,
+  title AS ALBUM_TITLE,
+  artist_id AS ARTIST_ID
+FROM album
+WHERE artist_id IN(1,4,5)
+```
+
+### 47. Introduction to Intersect
+
+**Syntax**  
+
+```
+SELECT id
+FROM left_one
+INTERSECT
+SELECT id
+FROM right_one;
+```
+**Distinction from joins and union all**  
+
+* `INTERSECT` looks for records in common, not individual key fields like what a join does to match. 
+* `INTERSECT` will only return records that both tables have in common.
+
+**Instruction for Exercise**  
+
+Finding same information from both of the tables, across the table.  
+Question: As you think about major world cities and their corresponding country, you may ask which countries also have a city with the same name as their country name?
+
+```
+  -- Select fields
+  SELECT countries.name
+    -- From countries
+    FROM countries
+  	-- Set theory clause
+  	INTERSECT
+  -- Select fields
+  SELECT cities.name
+    -- From cities
+    FROM cities;
+```
+
+### 48. Introduction to Except  
+Remember, You saw earlier that there are some monarchs that also act as the prime minister for their country. One way to determine those monarchs in the monarchs table that do not also hold the title of prime minister is to use the EXCEPT clause. This SQL query selects the monarch field from monarchs and then looks for common entries with the prime_ministers field, while also keeping track of the country for each leader. You can see in the resulting query that only the two European monarchs are not also prime ministers in the leaders database.  
+Syntax:  
+
+```
+SELECT monarch, country
+FROM monarchs
+EXCEPT 
+SELECT prime_minister,country
+FROM prime_ministers;
+```
+
+Exercise: Get the names of cities in cities which are not noted as capital cities in countries as a single field result.
+
+Note that there are some countries in the world that are not included in the countries table, which will result in some cities not being labeled as capital cities when in fact they are.
+
+Instructions
+100 XP
+Order the resulting field in ascending order.
+Can you spot the city/cities that are actually capital cities which this query misses?
+
+```
+SELECT countries.capital
+FROM countries
+EXCEPT
+SELECT cities.name
+FROM cities
+ORDER BY capital;
+```
+
+### 49. Introduction to Semi-joins and Anti-joins
+* **Semi Join:** A semi-join matches records by key field in the right table with those in the left. It then picks out only the rows in the left table that match that condition.   
+* **Anti-join:** The anti-join picks out those columns in the left table that do not match the condition on the right table.  
+* **Difference:** In comparison to joins we learnt before, joins we learnt were to combine the tables. But now we are using other tables to give condition for our current left table.  
+**Syntax**  
+
+Finish the semi-join (an intro to subqueries)
+```
+SELECT president, country, continent
+FROM presidents
+WHERE country IN
+  (SELECT name
+   FROM states
+   WHERE indep_year < 1800);
+```
+
+HERE's the Anti-join  
+
+```
+SELECT president,country,continent
+FROM presidents
+WHERE continent LIKE '%America'
+  AND country NOT IN
+    (SELECT name
+     FROM states
+     WHERE indep_year < 1000);
+```
+
+### 50. Semi-join Exercises-retrives languages spoken in the Middle East  
+
+**Instructions**
+**1/3**  
+You are now going to use the concept of a semi-join to identify languages spoken in the Middle East. Begin by selecting all country codes in the Middle East as a single field result using `SELECT`, `FROM`, and `WHERE`.  
+
+```
+SELECT code
+FROM countries
+WHERE region = 'Middle East';
+```
+
+**Instructions**  
+**2/3**  
+* Below the commented code, select only unique languages by name appearing in the `languages` table.
+* Order the resulting single field table by `name` in ascending order.
+
+```
+SELECT DISTINCT name
+FROM languages
+ORDER BY name;
+```
+
+**Instructions**  
+**3/3**  
+* Combine the previous two queries into one query by adding a WHERE IN statement to the SELECT DISTINCT query to determine the unique languages spoken in the Middle East.  
+* Order the result by name in ascending order.  
+
+```
+SELECT DISTINCT name
+  FROM languages
+WHERE code in
+  (SELECT code
+   FROM countries
+   WHERE region = 'Middle East')
+ORDER BY NAME;
+```
+
+### 51. Relating semi-jin to a tweaked inner join.
+
+**Using subqueries in semi-joins:**    
+
+```
+  SELECT DISTINCT name
+  FROM languages
+  WHERE code IN
+    (SELECT code
+     FROM countries
+     WHERE region = 'Middle East')
+  ORDER BY name;
+```
+
+**Using inner join to solve the same problem**  
+
+```
+SELECT DISTINCT languages.name AS language
+FROM languages
+INNER JOIN countries
+ON languages.code = countries.code
+WHERE region = 'Middle East'
+ORDER BY language;
+```
+
+### 52. Diagnosing problems using anti-join   
+* Another powerful join in SQL is the anti-join. It is particularly useful in identifying which records are causing an incorrect number of records to appear in join queries.   
+
+* You will also see another example of a subquery here, as you saw in the first exercise on semi-joins. Your goal is to identify the currencies used in Oceanian countries!  
+
+**Instructions**  
+**1/3**  
+Begin by determining the number of countries in countries that are listed in Oceania using SELECT, FROM, and WHERE.  
+
+```
+SELECT COUNT(code)
+FROM countries
+WHERE continent = 'Oceania';
+```
+
+**Instructions**  
+**2/3**  
+
+* Complete an inner join with `countries AS c1` on the left and `currencies AS c2` on the right to get the different currencies used in the countries of Oceania.  
+* Match `ON` the `code` field in the two tables.  
+* Include the country `code`, country `name`, and `basic_unit AS currency`.  
+
+Observe the query result and make note of how many different countries are listed here.  
+
+```
+SELECT c1.code,c1.name,c2.basic_unit AS currency
+FROM countries AS c1
+INNER JOIN currencies AS c2
+USING(code)
+WHERE continent = 'Oceania';
+
+```
+
+**Instructions**  
+**3/3**  
+Note that not all countries in Oceania were listed in the resulting inner join with currencies. Use an anti-join to determine which countries were not included!   
+
+* Use `NOT IN` and `(SELECT code FROM currencies)` as a subquery to get the country code and country name for the Oceanian countries that are not included in the `currencies` table.  
+
+```
+SELECT code,name
+FROM countries 
+WHERE continent = 'Oceania'
+  AND code NOT IN
+    (SELECT code 
+     FROM currencies);
+```
+
+### 53. Set theory challenge  
+Your task here will be to incorporate two of `UNION`/`UNION ALL`/`INTERSECT`/`EXCEPT` to solve a challenge involving three tables. In addition, you will use a subquery as you have in the last two exercises! 
+
+**Instructions**  
+* Identify the country codes that are included in either `economies` or `currencies` but not in `populations`.  
+* Use that result to determine the names of cities in the countries that match the specification in the previous instruction.  
+
+```
+SELECT c1.name
+FROM countries AS c1
+  WHERE code IN
+  (SELECT e.code
+   FROM economies AS e
+   AND
+   SELECT c2.code
+   FROM currencies AS c2
+   NOT
+   SELECT p.country_code
+   FROM populations)
+```
+The above is wrong. To select, use union and except in the subquery.  
+
+
+```
+-- Select the city name
+SELECT name
+  -- Alias the table where city name resides
+  FROM cities AS c1
+  -- Choose only records matching the result of multiple set theory clauses
+  WHERE country_code IN
+(
+    -- Select appropriate field from economies AS e
+    SELECT e.code
+    FROM economies AS e
+    -- Get all additional (unique) values of the field from currencies AS c2   
+    UNION
+    SELECT c2.code
+    FROM currencies AS c2
+    -- Exclude those appearing in populations AS p  
+    EXCEPT
+    SELECT p.country_code
+    FROM populations AS p
+);
+
+```
+## SECTION 4: Subqueries
+### 54. Subqueries inside WHERE and SELECT clauses  
+
+**Asian countries below average `fert_rate`**  
+
+```
+SELECT name, fert_rate
+FROM states
+WHERE continent = 'Asia'
+  AND fert_rate < 
+    (SELECT AVG(fert_rate)
+    FROM states);
+```
+
+**Subqueries inside SELECT clausess - setup**  
+
+```
+SELECT DISTINCT continent,
+  (SELECT COUNT(*)
+   FROM states
+   WHERE prime_ministers.continent = states.continent) AS countries
+FROM prime_ministers;
+```
+
+### 55. Subquery inside where
+
+You'll now try to figure out which countries had high average life expectancies (at the country level) in 2015.
+
+**Instructions**
+**1/2**  
+Begin by calculating the average life expectancy across all countries for 2015.  
+
+```
+SELECT AVG(life_expectancy)
+FROM populations
+WHERE year = 2015;
+```
+**Instructions**
+**2/2**  
+Recall that you can use SQL to do calculations for you. Suppose we wanted only records that were above `1.15 * 100` in terms of life expectancy for 2015:  
+
+```
+SELECT *
+  FROM populations
+WHERE life_expectancy > 1.15 * 100
+  AND year = 2015;
+```
+Select all fields from `populations` with records corresponding to larger than 1.15 times the average you calculated in the first task for 2015. In other words, change the `100` in the example above with a subquery.  
+
+```
+-- Select fields
+SELECT *
+  -- From populations
+FROM populations
+-- Where life_expectancy is greater than
+WHERE Life_expectancy >1.15 * 
+(SELECT AVG(life_expectancy)
+FROM populations
+WHERE year = 2015) 
+AND year = 2015;
+
+```
+### 56. Subquery inside where (2)  
+Use your knowledge of subqueries in `WHERE` to get the urban area population for only capital cities.  
+
+**Instructions**  
+
+* Make use of the `capital` field in the `countries` table in your subquery.  
+* Select the city name, country code, and urban area population fields.  
+
+```
+SELECT cities.name,countries.code,urbanarea_pop
+FROM cities
+WHERE cities.name IN (
+SELECT countries.capital
+FROM countries
+)
+ORDER BY urbanarea_pop DESC;
+```
+
+### 57. Subquery inside select
+
+This exercise is using either join or subquery to write queries.     
+
+You have seen previously how to use `GROUP BY` with aggregate functions and an inner join to get summarized information from multiple tables.  
+
+The code given in the first query selects the top nine countries in terms of number of cities appearing in the cities` table. Recall that this corresponds to the most populous cities in the world. Your task will be to convert the second query to get the same result as the provided code.  
+
+**Initial code:**  
+
+```
+SELECT countries.name AS country, COUNT(*) AS cities_num
+  FROM cities
+    INNER JOIN countries
+    ON countries.code = cities.country_code
+GROUP BY country
+ORDER BY cities_num DESC, country
+LIMIT 9;
+```
+**Transformation**  
+
+```
+SELECT countries.name AS country, (
+SELECT COUNT(cities.name)
+FROM cities
+WHERE countries.code = cities.country_code) AS cities_num
+FROM countries
+ORDER BY cities_num DESC, country
+LIMIT 9;
+
+```
+
+### 58. Subquery inside FROM clause
+
+**Example**  
+
+```
+SELECT DISTINCT monarchs.continent,subquery.max_perc
+FROM monarchs,
+  (SELECT continent,MAX(women_parli_perc) AS max_perc
+  FROM states
+  GROUP BY continent) AS subquery
+WHERE monarchs.continent = subquery.continent
+ORDER BY continent;
+```
+ 
+### 59. Subquery inside from  
+
+The last type of subquery you will work with is one inside of FROM.  
+
+You will use this to determine the number of languages spoken for each country, identified by the country's local name! (Note this may be different than the name field and is stored in the local_name field.)  
+
+**Instructions**  
+**1/2**  
+
+* Begin by determining for each country code how many `languages` are listed in the languages table using `SELECT`, `FROM`, and `GROUP BY`.  
+* Alias the aggregated field as `lang_num`.  
+
+My version here, which is wrong because I forgot to include code to match, where condition...
+```
+SELECT code,name, subquery.num AS lang_num
+FROM languages, 
+  (SELECT COUNT(name) AS num
+   FROM languages
+   GROUP BY code) AS subquery;
+```
+Correct version:  
+
+```
+-- Select fields
+SELECT countries.local_name,subquery.lang_num
+  -- From countries
+  FROM countries,
+  	-- Subquery (alias as subquery)
+  	(SELECT code, COUNT(*) AS lang_num
+  	 FROM languages
+  	 GROUP BY code) AS subquery
+  -- Where codes match
+  WHERE countries.code = subquery.code
+-- Order by descending number of languages
+  ORDER BY lang_num DESC;
+```  
+
+### 60. Advanced Subquery  
+
+You can also nest multiple subqueries to answer even more specific questions.  
+
+In this exercise, for each of the six continents listed in 2015, you'll identify which country had the maximum inflation rate, and how high it was, using multiple subqueries. The table result of your final query should look something like the following, where anything between < > will be filled in with appropriate values:
+
+    name      |    continent
+------------- | ----------------  
+  <country1>  | North America  
+  <country2>  | Africa  
+  <country3>  | Oceania   
+  <country4>  | Europe  
+        
+Again, there are multiple ways to get to this solution using only joins, but the focus here is on showing you an introduction into advanced subqueries.  
+
+**Instructions**  
+**1/3**  
+
+Create an INNER JOIN with countries on the left and economies on the right with USING, without aliasing your tables or columns.  
+Retrieve the country's name, continent, and inflation rate for 2015.  
+
+```
+SELECT countries.name,countries.continent,economies.inflation_rate
+FROM countries
+INNER JOIN economies
+USING(CODE)
+WHERE year = 2015;
+```
+
+**Instructions**  
+**2/3**  
+
+Select the maximum inflation rate in 2015 AS max_inf grouped by continent using the previous step's query as a subquery in the FROM clause.  
+
+* Thus, in your subquery you should:  
+    + Create an inner join with `countries` on the left and `economies` on the right with `USING` (without aliasing your tables or columns).  
+    + Retrieve the country name, continent, and inflation rate for 2015.  
+    + Alias the subquery as `subquery`.  
+    
+This will result in the six maximum inflation rates in 2015 for the six continents as one field table. Make sure to not include `continent` in the outer `SELECT` statement.
+
+
+```
+SELECT MAX(inflation_rate) AS max_inf
+  -- Subquery using FROM (alias as subquery)
+  FROM (
+      SELECT name, continent, inflation_rate
+      FROM countries
+      INNER JOIN economies
+      USING (code)
+      WHERE year = 2015) AS subquery
+-- Group by continent
+GROUP BY continent;
+```
+
+**Instructions**  
+**3/3**  
+* Now it's time to append your second query to your first query using `AND` and `IN` to obtain the name of the country, its continent, and the maximum inflation rate for each continent in 2015.  
+**  For the sake of practice, change all joining conditions to use `ON` instead of `USING`.
+
+```
+-- Select fields
+SELECT name, continent, inflation_rate
+  -- From countries
+  FROM countries
+	-- Join to economies
+	INNER JOIN economies
+	-- Match on code
+	ON countries.code = economies.code
+  -- Where year is 2015
+  WHERE year = 2015
+    -- And inflation rate in subquery (alias as subquery)
+    AND inflation_rate IN (
+        SELECT MAX(inflation_rate) AS max_inf
+        FROM (
+             SELECT name, continent, inflation_rate
+             FROM countries
+             INNER JOIN economies
+             ON countries.code = economies.code
+             WHERE year = 2015) AS subquery
+      -- Group by continent
+        GROUP BY continent);
+```
+### 61. Subquery challenge  
+Use a subquery to get 2015 economic data for countries that do **not** have  
+
+* `gov_form` of `'Constitutional Monarchy'` or  
+* `'Republic'` in their `gov_form`.  
+
+Here, `gov_form` stands for the form of the government for each country. Review the different entries for `gov_form` in the `countries` table.  
+
+**Instructions**  
+
+* Select the country code, inflation rate, and unemployment rate.  
+* Order by inflation rate ascending.  
+* Do not use table aliasing in this exercise.  
+
+```
+SELECT code,inflation_rate,unemployment_rate
+FROM economies 
+WHERE year = 2015 AND code NOT IN (
+SELECT code
+FROM countries
+WHERE (gov_form = 'Republic' OR gov_form LIKE 'Constitutional%'))
+ORDER BY inflation_rate;
+````
+
+### 62. Course Review  
+
+**Types of joins**  
+
+* INNER JOIN
+  + Self-join  
+  + an INNER JOIN is also denoted as just JOIN in SQL. A special case of an INNER JOIN you explored is called a self-join.   
+  
+* OUTER JOIN  
+  + LEFT JOIN
+  + RIGHT JOIN
+  + FULL JOIN  
+  
+* CROSS JOIN: A CROSS JOIN matches all records from fields specified in one table with all records from fields specified in another table. Remember that a CROSS JOIN does not have an ON or USING clause.  
+
+* Semi-join / Anti-join
+
+**Comparison Between Joins**  
+
+a.INNER JOIN vs Left JOIN:  
+
+An INNER JOIN keeps only the records in which the key field (or fields) is in both tables. A LEFT JOIN keeps all the records in fields specified in the left table and includes the matches in the right table based on the key field or fields. Key field values that don't match in the right table are included as missing data in the resulting table of a LEFT JOIN.  
+
+b.Right JOIN vs FULL JOIN:    
+A RIGHT JOIN keeps all the records specified in the right table and includes the matches from the key field (or fields) in the left table. Those that don't match are included as missing values in the resulting table from the RIGHT JOIN query. A FULL JOIN is a combination of a LEFT JOIN and a RIGHT JOIN showing exactly which values appear in both tables and those that appear in only one or the other table.  
+
+**Set Theory Clauses**  
+Recall that UNION includes every record in both tables but DOES NOT double count those that are in both tables whereas UNION ALL DOES replicate those that are in both tables. INTERSECT gives only those records found in both of the two tables. EXCEPT gives only those records in one table BUT NOT the other.  
+
+**Semi-joins and Anti-joins**  
+When you'd like to filter your first table based on conditions set on a second table, you should use a semi-join to accomplish your task. If instead you'd like to filter your first table based on conditions NOT being met on a second table, you should use an anti-join. Anti-joins are particularly useful in diagnosing problems with other joins in terms of getting fewer or more records than you expected.  
+   
+**Types of basic subqueries**  
+* Subqueries inside WHERE clasues
+* SUbqueries inside SELECT clauses  
+* Subqueries inside FROM clauses  
+
+### 63. Final Challenge  
+In this exercise, you'll need to get the country names and other 2015 data in the `economies` table and the `countries` table for **Central American countries with an official language**.  
+
+**Instructions**  
+
+* Select unique country names. Also select the total investment and imports fields.
+* Use a left join with `countries` on the left. (An inner join would also work, but please use a left join here.)
+* Match on `code` in the two tables `AND` use a subquery inside of `ON` to choose the appropriate `languages` records.
+* Order by country name ascending.
+* Use table aliasing but **not** field aliasing in this exercise.
+
+First Try is wrong because official in 1693 is not a field previously. I should use code here for subquery.  
+
+```
+SELECT DISTINCT name,total_invstment,imports
+FROM countries
+LEFT JOIN economies
+ON countries.code = economies.code
+WHERE year = 2015 AND official in (
+SELECT official
+FROM languages
+INNER JOIN countries 
+USING code
+WHERE official = 'true' AND region = 'Central America'
+)
+ORDER BY countries.name;
+```
+Additionally, region = 'central America' was not good use here. It only works above order by after 1699.  
+
+```
+SELECT DISTINCT c.name,e.total_investment,e.imports
+FROM countries AS c
+LEFT JOIN economies AS e
+ON c.code = e.code
+WHERE c.code IN (
+SELECT l.code
+FROM languages AS l
+WHERE official = 'true')
+AND year = 2015
+AND region = 'Central America'
+ORDER BY c.name;
+```
+
+### 64. Final challenge (2)  
+calculate the average fertility rate for each region in 2015.  
+
+**Instruction**  
+
+* Include the name of region, its continent, and average fertility rate aliased as avg_fert_rate.  
+* Sort based on avg_fert_rate ascending.  
+* Remember that you'll need to GROUP BY all fields that aren't included in the aggregate function of SELECT.  
+
+```
+SELECT countries.region,countries.continent,AVG(populations.fertility_rate) AS avg_fert_rate
+FROM countries
+LEFT JOIN populations
+ON countries.code = populations.country_code
+WHERE year = 2015
+GROUP BY region,continent
+ORDER BY avg_fert_rate;
+```
+### 65. Final challenge (3)  
+You are now tasked with determining the top 10 capital cities in Europe and the Americas in terms of a calculated percentage using `city_proper_pop` and `metroarea_pop` in `cities`.  
+
+Do not use table aliasing in this exercise.  
+
+**Instruction**  
+
+* Select the city name, country code, city proper population, and metro area population.    
+* Calculate the percentage of metro area population composed of city proper population for each city in cities, aliased as city_perc.  
+* Focus only on capital cities in Europe and the Americas in a subquery.  
+* Make sure to exclude records with missing data on metro area population.  
+* Order the result by city_perc descending.  
+* Then determine the top 10 capital cities in Europe and the Americas in terms of this city_perc percentage.  
+
+```
+SELECT name,country_code,city_proper_pop,metroarea_pop,city_proper_pop / metroarea_pop * 100 AS city_perc
+FROM cities
+WHERE country_code IN (
+SELECT c2.code
+FROM countries AS c2
+WHERE region like '%America' OR region like '%Europe'
+)
+AND name IN (
+SELECT capital
+FROM countries 
+INNER JOIN cities
+ON country_code = code
+)
+AND metroarea_pop IS NOT NULL
+ORDER by city_perc DESC
+LIMIT 10;
+```
+Easier Way:    
+
+```
+SELECT name, country_code, city_proper_pop, metroarea_pop,
+	  -- Calculate city_perc
+      city_proper_pop / metroarea_pop * 100 AS city_perc
+  -- From appropriate table    
+  FROM cities
+  -- Where
+  WHERE name IN
+    -- Subquery
+    (SELECT capital
+     FROM countries
+     WHERE (continent = 'Europe'
+        OR continent LIKE '%America'))
+       AND metroarea_pop IS NOT NULL
+-- Order appropriately
+ORDER BY city_perc DESC
+-- Limit amount
+LIMIT 10;
+```
+![alt text](/Users/shayne_lin/Desktop/work experiennce/UCSB/PSTAT10/Pstat10/pic/p1.png)
+### Summary: Differences Between Union and Joins
+**Join**  
+
+* Join combines data from many tables based on a matched condition between them.
+* It combines data into new columns.
+* Number of columns selected from each table may not be the same.
+* Datatypes of corresponding columns selected from each table can be different.
+* It may not return distinct columns.  
+
+**Union**  
+
+* SQL combines the result-set of two or more SELECT statements.
+* It combines data into new rows.
+* Number of columns selected from each table should be same.
+* Datatypes of corresponding columns selected from each table should be same.
+* It returns distinct rows.  
+
+
+## SECTION 5: SQL DATABASE   
+### 66. CRUD operations  
+
+
+**1.Create**    
+
+* Databases, Tables or views  
+* Users, permissions, and security groups    
+* Syntax:  
+    CREATE TABLE unique table name(column name,data type, size)  
+
+```
+CREATE TABLE test_table(
+  test_date date,
+  test_name varchar(20),
+  // a character that has less than 20 characters.
+  test_int int
+
+)
+```
+So, these are the things to consider as you creating a table.  
+
+* Table and column names  
+* Type of data each column will store  
+  + Date: date(YYYY-MM-DD),datetime(YYYY-MM-DD hh:mm:ss); time  
+  + Numeric: integer, decimal, float; bit(1=TRUE,0=FALSE. Also accepts `NULL` values)  
+  + Strings: `char`,`varchar`,`nvarchar`  
+  
+* Size or amount of data stored in the column  
+
+
+
+**READ**  
+
+* Example: SELECT statement  
+
+**UPDATE**  
+
+* Amend existing database records  
+
+**DELETE**  
+
+* Delete records, needing sufficient access permissions to carry out.  
+
+
+### 67. Create tables.  
+Consolidate some useful track information into one table. This will consist of the track name, the artist, and the album the track came from. You also want to store the track length in a different format to how it is currently stored in the track table.  
+
+**Sample:** 
+
+```
+CREATE TABLE test_table(
+  test_date DATE, 
+  test_name VARCHAR(20), 
+  test_int INT
+)
+```
+**Instructions**  
+  
+
+```
+-- Create the table
+CREATE TABLE results (
+	-- Create track column
+	track VARCHAR(200),
+    -- Create artist column
+	artist VARCHAR(120),
+    -- Create album column
+	album VARCHAR(160),
+	-- Create track_length_mins
+	track_length_mins INT,
+	);
+
+-- Select all columns from the table
+SELECT 
+  track,
+  artist, 
+  album, 
+  track_length_mins 
+FROM 
+  results;
+```
+
+### 68. Insert, Update, Delete  
+
+**INSERT SYNTAX**  
+
+```
+//1 
+INSERT INTO table_name
+//2
+INSERT INTO table_name(col1,col2,col3)
+//3
+INSERT INTO table_name(col1,col2,col3)
+VALUES
+  (`value1`,`value2`,value3)
+```
+
+**INSERT SELECT**  
+
+```
+INSERT INTO table2
+SELECT * FROM table1
+WHERE condition;
+```
+
+```
+INSERT INTO table_name(col1,col2,col3)
+SELECT
+  column1,
+  column2,
+  column3
+FROM other_table
+WHERE
+    -- conditions apply
+```
+Note: 
+
+* Insert usually follows after create_table..
+* Don't use `SELECT *`  
+* Be specific in case table structure changes  
+* It's a good idea to be specific about the names of the columns we want to insert into, and the corresponding names of the columns we want to SELECT from.  
+* In the second example, instead of inserting `VALUE` directly, we select values from other_table.  
+
+
+**UPDAATE SYNTAX**  
+
+```
+UPDATE TABLE
+SET column = value
+WHERE 
+  -- Conditions(s);
+```
+
+* Don't forget the `WHERE` clause~  
+
+```
+UPDATE table
+SET
+  column1 = value1,
+  column2 = value2
+WHERE
+  -- Condition(s);
+```
+
+**DELETE & TRUNCATE TABLE SYNTAX**  
+
+```
+DELETE
+FROM table
+WHERE 
+  -- conditions
+```
+
+```
+TRUNCATE TABLE table_name
+// clears the entire table at once
+```
+
+* It's easy, but we won't get asked to confirm.  
+* The syntax is simply DELETE FROM, the table name, and the WHERE clause to specify the records for deletion. Be sure to test the WHERE clause first.  
+* Another method is to use the TRUNCATE TABLE statement. This does not accept or require a WHERE clause - it will remove all data from all columns at once.  
+
+### 69. Insert  
+
+This exercise consists of two parts: In the first, you'll create a new table very similar to the one you created in the previous interactive exercise. After that, you'll insert some data and retrieve it.  
+
+**Instructions 1/2**  
+
+* Create a table called `tracks` with 2 `VARCHAR` columns named `track` and `album`, and one integer column named `track_length_mins`. Then SELECT all columns from your new table using the `*` shortcut to verify the table structure. 
+
+
+**Instructions 2/2**  
+
+* Insert the track `'Basket Case'`, from the album `'Dookie'`, with a track length of `3`, into the appropriate columns. Then perform the `SELECT *` once more to view your newly inserted row.
+
+```
+CREATE TABLE tracks(
+
+track VARCHAR(200),
+album VARCHAR(160),
+track_length_mins INT
+);
+
+INSERT INTO tracks(track,album,track_length_mins)
+VALUES
+  ('Basket Case','Dookie',3);
+```
+
+### 70. Update  
+You may sometimes have to update the rows in a table. For example, in the album table, there is a row with a very long `album` title, and you may want to shorten it.  
+
+You don't want to delete the record - you just want to update it in place. To do this, you need to specify the `album_id` to ensure that only the desired row is updated and all others are not modified.  
+
+**Instructions**  
+
+* Select the `title` column from the `album` table where the `album_id` is `213`.
+
+```
+SELECT title
+FROM album
+WHERE album_id = 213;
+
+UPDATE album
+SET title = 'Pure Cult: The Best Of The Cult'
+WHERE album_id = 213;
+```
+
+### 71. Delete  
+
+Remember - there is no confirmation before deleting. When you execute the statement, the record(s) are deleted immediately. Always ensure you test with a `SELECT` and `WHERE` in a separate query to ensure you are selecting and deleting the correct records. If you forget to specify a `WHERE` condition, you will delete ALL rows from the table.
+
+`DELETE` the record from album where `album_id` is 1
+```
+DELETE
+FROM album
+WHERE album_id = 1;
+```
+
+### 72. Introduction to Variables, Declare, SET, and Declaring more than one variable  
+
+**Variables**  
+
+* Think of it as a placeholder for a specific value, of a specific data type.  
+* Can write less repetitive code. 
+* Variable names begin with the 'at' sign , if our object is about the artist, so we could perhaps call this variable "@my_artist", then all we need to do is update the variable each time we run the query.  
+
+**Example:**  
+
+Complicated way to change the query for another artist.  
+
+```
+SELECT *
+FROM artist
+WHERE name = 'AC/DC';
+
+SELECT *
+FROM artist
+WHERE name = 'U2';
+```
+Easier way to avoid repetition, create a variable:  
+
+```
+SELECT *
+FROM artist
+WHERE name = @my_artist;
+```
+**DECLARE**  
+
+```
+DECLARE @
+
+//Integer variable:
+DECLARE @test_int INT
+
+//Varchar variable:
+DECLARE @my_artist VARCHAR(100)
+```
+
+**SET**  
+
+```
+//Integer variable:
+DECLARE @test_int INT
+SET @test_int = 5
+
+```
+
+Here's how we change the complicated way to automated easier way:  
+
+```
+DECLARE @my_artist varchar(100)
+set @my_artist = 'AC/DC' 
+```
+
+```
+DECLARE @my_artist varchar(100)
+DECLARE @my_album varchar(300);
+
+SET @my_artist = 'AC/DC'
+SET @2my_album = 'Let There Be Rock' ;
+
+SELECT --
+FROM --
+WHERE artist = @my_artist
+AND album = @my_album;
+
+//Then, when we want to change the value for @my_artist, or my_album, we simply need to update the table with value in the `SET` statement.  
+DECLARE @my_artist varchar(100)
+DECLARE @my_album varchar(300);
+
+SET @my_artist = 'U2'
+SET @2my_album = 'Pop' ;
+
+SELECT --
+FROM --
+WHERE artist = @my_artist
+AND album = @my_album;
+
+```
+
+**Temporary Tables**  
+we can create a `temporary table`. And once we've created it, it's available for further querying.  
+How?  
+We write our SELECT query, but in between SELECT and FROM, we use the keyword INTO, and then type our desired table name, prefaced by the hash (#) sign. The table will exist either until our connection or session ends, or we manually remove it with the 'DROP TABLE' statement.  
+
+```
+Temporary tables
+
+SELECT
+  col1
+  col2,
+  col3 
+INTO #my_temp_table
+FROM my_existing_table  
+WHERE
+  --conditions  
+  
+* #my_temp_table exists until connection or session ends  
+
+-- Remove table manually
+DROP TABLE #my_temp_table
+```
+
+
+### 73. DECLARE and SET a variable  
+
+DECLARE and SET a variable  
+Using variables makes it easy to run a query multiple times, with different values, without having to scroll down and amend the WHERE clause each time. You can quickly update the variable at the top of the query instead. This also helps provide greater security, but that is out of scope of this course.  
+
+Let's go back to the now very familiar grid table for this exercise, and use it to practice extracting data according to your newly defined variable.  
+
+```
+-- Declare the variable @region
+DECLARE @region VARCHAR(10)
+
+-- Update the variable value
+SET @region = 'RFC'
+
+SELECT description,
+       nerc_region,
+       demand_loss_mw,
+       affected_customers
+FROM grid
+WHERE nerc_region = @region;
+```
+
+### 74. Declare multiple variables   
+You've seen how to `DECLARE` and `SET` set 1 variable. Now, you'll `DECLARE` and `SET` multiple variables. There is already one variable declared, however you need to overwrite this and declare 3 new ones. The `WHERE` clause will also need to be modified to return results between a range of dates.  
+
+**Instructions**  
+
+```
+-- Declare your variables
+DECLARE @start DATE
+DECLARE @stop DATE
+DECLARE @affected INT;
+-- SET the relevant values for each variable
+SET @start = '2014-01-24'
+SET @stop  = '2014-07-02'
+SET @affected =  5000 ;
+
+SELECT 
+  description,
+  nerc_region,
+  demand_loss_mw,
+  affected_customers
+FROM 
+  grid
+-- Specify the date range of the event_date and the value for @affected
+WHERE event_date BETWEEN @start AND @stop
+AND affected_customers >= @affected;
+```
+
+### 75. Ultimate power  
+Sometimes you might want to 'save' the results of a query so you can do some more work with the data. You can do that by creating a temporary table that remains in the database until SQL Server is restarted. In this final exercise, you'll select the longest track from every album and add that into a temporary table which you'll create as part of the query.  
+
+**Instructions**  
+
+* Insert data via a SELECT statement into a temporary table called #maxtracks.  
+* Join album to artist using artist_id, and track to album using album_id.  
+* Run the final SELECT statement to retrieve all the columns from your new table.  
+
+```
+SELECT  album.title AS album_title,
+  artist.name as artist,
+  MAX(track.milliseconds / (1000 * 60) % 60 ) AS max_track_length_mins
+-- Name the temp table #maxtracks
+INTO #maxtracks
+FROM album
+-- Join album to artist using artist_id
+INNER JOIN artist ON album.artist_id = artist.artist_id
+-- Join track to album using album_id
+INNER JOIN track ON album.album_id = track.album_id
+GROUP BY artist.artist_id, album.title, artist.name,album.album_id
+-- Run the final SELECT query to retrieve the results from the temporary table
+SELECT album_title, artist, max_track_length_mins
+FROM  #maxtracks
+ORDER BY max_track_length_mins DESC, artist;
+
+```
+
+### 76. Primary Keys
+**Primary Keys**  
+uniquely identify each row in a table  
+**Foreign Key**  
+A key to be connected with other table, outer table.  
+
+**Example**  
+artist table  
+```
+artist_id name   
+1 AC/DC                      
+2 Accept    
+```
+
+Here, the primary ID for artist table is artist_id  
+
+```
+album table  
+album_id title artist_id  
+1 For Those About To Rock 1  
+2 Balls to the Wall 2  
+```
+
+Here, the primary ID is album_id, while the foreign id for album table is artist_id. In other words, `artist_id`: Foreign key to `artist`  
+
+### 77. Create DATABASE  
+The `CREATE DATABASE` statement is used to create a new SQL database.  
+
+Syntax  
+
+```
+CREATE DATABASE databasename;
+```  
+Example, the following SQL statement creates a database called "testDB":  
+
+```
+CREATE DATABASE testDB;
+```
+
+
+
+### 78. DROP DATABASE  
+
+The following SQL statement drops the existing database "testDB":  
+
+```
+DROP DATABASE testDB;
+```
+
+Make sure you have admin privilege before dropping any database. Once a database is dropped, you can checked it in the list of databases with the following SQL command: `SHOW DATABASES`;  
+
+### 79. SQL BACKUP DATABASE for SQL Server  
+**The SQL `BACKUP DATABASE` Statement**    
+
+The `BACKUP DATABASE` statement is used in SQL Server to create a full back up of an existing SQL database.  
+
+Syntax  
+
+```
+BACKUP DATABASE databasename
+TO DISK = 'filepath';
+```
+
+**THE SQL BACKUP With Differential Statement**    
+A differential back up only backs up the parts of the database that have changed since the last full database backup.  
+
+Syntax  
+
+```
+BACKUP DATABASE databasename  
+TO DISK = `filepath`
+WITH DIFFERENTIAL;
+```
+
+Summary: 
+* a differential back up reduces the back up time (since only the changes are backed up)
+* always back up the database to a different drive than the actual database. Then if you get a disk crash, you will not lose your backup file along with the database.  
+
+
+### 80. SQL ALTER TABLE STATEMENT  
+The `ALTER TABLE` statement is used to add, delete, or modify columns in an existing table.  
+The `ALTER TABLE` statement is also used to add and drop various constraints on an existing table.  
+
+Also, here's a quick referece for [Data Types reference][2].
+
+
+**ALTER TABLE - ADD Column**  
+
+To add a column in a table, use the following syntax:  
+
+```
+ALTER TABLE table_name  
+ADD column_name datatype; 
+```
+Another one:  
+
+```
+ALTER TABLE Persons
+ADD DateOfBirth date;
+```
+
+The following SQL adds an "Email" column to the "Customers" table:  
+
+```
+Alter TABLE Customers
+ADD Email varchar(255);
+```
+
+**ALTER TABLE - DROP COLUMN**  
+To delete a column in a table, use the follwoing syntax (notice that some database systems don't allow deleting a column):  
+
+```
+ALTER TABLE table_name
+DROP COLUMN column_name;
+```
+
+The following SQL deletes the "Email" column from the "Customers" table:  
+
+```
+ALTER TABLE Customers
+DROP COLUMN Email;
+```
+
+**Change Data Type**
+**ALTER TABLE - ALTER/MODIFY COLUMN**  
+To change the data type of a column in a table use the following syntax:  
+
+SQL Server/MS Access:
+
+```
+ALTER TABLE table_name
+ALTER COLUMN column_name datatype;
+```
+
+My SQL/Oracle (prior version 10 G):
+
+```
+ALTER TABLE table_name
+MODIFY COLUMN column_name datatype;
+```
+Oracle 10G and later:   
+
+```
+ALTER TABLE table_name
+MODIFY column_name datatype;
+```
+
+
+### 81. SQL Contstraints  
+Constraints can be specified when the table is created with the `CREATE TABLE` statement, or after the table is created with the `ALTER TABLE` statement.
+
+```
+CREATE TABLE table_name(
+  column1 datatype constraint,
+  column2 datatype constraint
+)
+```
+**SQL Constraints**  
+SQL constraints are used to specify rules for the data in a table.  
+
+Constraints are used to limit the type of data that can go into a table. This ensures the accuracy and reliability of the data in the table. If there is any violation between the constraint and the data action, the action is aborted.  
+
+Constraints can be column level or table level. Column level constraints apply to a column, and table level constraints apply to the whole table.  
+
+The following constraints are commonly used in SQL:
+
+* NOT NULL - Ensures that a column cannot have a NULL value  
+* UNIQUE - Ensures that all values in a column are different  
+* PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table  
+* FOREIGN KEY - Prevents actions that would destroy links between tables  
+* CHECK - Ensures that the values in a column satisfies a specific condition  
+* DEFAULT - Sets a default value for a column if no value is specified  
+* CREATE INDEX - Used to create and retrieve data from the database very quickly    
+
+For more info and examples, please refer to [W3school's Constraints][3].    
+
+### 82. SQL `NOT NULL` Constraint  
+
+By default, a column can hold NULL values.  
+
+The `NOT NULL` constraint enforces a column to NOT accept NULL values.  
+
+This enforces a field to always contain a value, which means that you cannot insert a new record, or update a record without adding a value to this field.  
+
+**SQL NOT NULL on CREATE TABLE**  
+The following SQL ensures that the "ID", "LastName", and "FirstName" columns will NOT accept NULL values when the "Persons" table is created:  
+
+**Example**  
+
+```
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
+```
+
+**SQL NOT NULL on ALTER TABLE**  
+To create a `NOT NULL` constraint on the "Age" column when the "Persons" table is already created, use the following SQL:  
+
+```
+ALTER TABLE Persons
+MODIFY Age int NOT NULL;
+```
+
+
+### 83. SQL UNIQUE Constraint  
+
+The `UNIQUE` constraint ensures that all values in a column are different.  
+
+Both the `UNIQUE` and `PRIMARY KEY` constraints provide a guarantee for uniqueness for a column or set of columns.  
+
+A `PRIMARY KEY` constraint automatically has a `UNIQUE` constraint.  
+
+However, you can have many `UNIQUE` constraints per table, but only one `PRIMARY KEY` constraint per table.  
+
+**SQL UNIQUE Constraint on CREATE TABLE**  
+
+The following SQL creates a `UNIQUE` constraint on the "ID" column when the "Persons" table is created:  
+
+*QL SERVER/ Oracle / MS Access:
+
+```
+CREATE TABLE Persons (
+  ID int NOT NULL UNIQUE,
+  LASTNAME varchar(255) NOT NULL,
+  FIRSTname varchar(255),
+  AGE int
+);
+```
+MySQL
+
+```
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    UNIQUE (ID)
+);
+```
+
+To name a UNIQUE constraint, and to define a UNIQUE constraint on multiple columns, use the following SQL syntax:  
+
+MySQL / SQL Server / Oracle / MS Access:  
+
+```
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT UC_Person UNIQUE (ID,LastName)
+);
+```
+**SQL UNIQUE Constraint on ALTER TABLE**  
+
+To create a *UNIQUE* constraint on the "ID" column when the table is already created, use the following SQL:  
+
+MySQL/ SQL Server/ Oracle/ MS Access:  
+
+```
+ALTER TABLE Persons
+ADD UNIQUE (ID);
+```
+
+To name a `UNIQUE` constraint, and to define a `UNIQUE` constraint on multiple columns, use the following SQL syntax:  
+
+MySQL / SQL Server / Oracle / MS access:  
+
+```
+ALTER TABLE Persons
+ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
+```
+**DROP a UNIQUE Constraint**  
+
+To drop a `UNIQUE` constraint, use the following SQL:  
+
+MySQL:  
+
+```
+ALTER TABLE Persons 
+DROP INDEX UC_Person;
+```
+
+SQL Server / Oracle / MS Access:  
+
+```
+ALTER TABLE Persons
+DROP CONSTRAINT UC_Person;
+```
+
+### 84. SQL PRIMARY KEY Constraint  
+
+The PRIMARY KEY constraint uniquely identifies each record in a table.  
+
+Primary keys must contain UNIQUE values, and cannot contain NULL values.  
+
+A table can have only ONE primary key; and in the table, this primary key can consist of single or multiple columns (fields).  
+
+
+**SQL PRIMARY KEY on CREATE TABLE**  
+The following SQL creates a PRIMARY KEY on the "ID" column when the "Persons" table is created:  
+
+MySQL:  
+
+```
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+```
+SQL Server / Oracle / MS Access:  
+
+```
+CREATE TABLE Persons{
+  ID int NOT NULL PRIMARY KEY,
+  LastName varchar(255) NOT NULL,
+  FirstName varchar(255),
+  Age int
+};
+```
+
+To allow naming of a PRIMARY KEY constraint, and for defining a PRIMARY KEY constraint on multiple columns, use the following SQL syntax:  
+
+```
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+);
+```
+Note: In the example above there is only ONE PRIMARY KEY (PK_Person). However, the VALUE of the primary key is made up of TWO COLUMNS (ID + LastName).  
+
+**SQL PRIMARY KEY on ALTER TABLE**  
+To create a `PRIMARY KEY` constraint on the "ID" column when the table is already created, use the following SQL:  
+
+MySQL/SQL Server/Oracle/MS Access:  
+
+```
+ALTER TABLE Persons
+ADD PRIMARY KEY(ID);
+```
+To allow naming of a `PRIMAYRY KEY` constraint, and for defining a `PRIMARY KEY` constraint on multiple columns, use the following SQL syntax:  
+
+MySQL / SQL Server / Oracle / MS Access:
+
+```
+ALTER TABLE Persons
+ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+```
+Note: If you use `ALTER TABLE` to add a primary key, the primary key column(s) must have been declared to not contain NULL values (when the table was first created).
+
+**DROP a PRIMARY KEY Constraint**  
+To drop a `PRIMARY KEY` constraint, use the following SQL:   
+
+MySQL:  
+
+```
+ALTER TABLE Persons
+DROP PRIMARY KEY;
+```
+
+SQL Server / Oracle / MS Access:
+
+```
+ALTER TABLE Persons
+DROP CONSTRAINT PK_Person;  
+```
+
+### 85. SQL FOREIGN KEY Constraint   
+The `FOREIGN KEY` constraint is used to prevent actions that would destroy links between tables.  
+
+A `FOREIGN KEY` is a field (or collection of fields) in one table, that refers to the `PRIMARY KEY` in another table.  
+
+The table with the foreign key is called the child table, and the table with the primary key is called the referenced or parent table.  
+
+
+Notice that the "PersonID" column in the "Orders" table points to the "PersonID" column in the "Persons" table.  
+
+The "PersonID" column in the "Persons" table is the `PRIMARY KEY` in the "Persons" table.  
+
+The "PersonID" column in the "Orders" table is a `FOREIGN KEY` in the "Orders" table.
+
+The `FOREIGN KEY` constraint prevents invalid data from being inserted into the foreign key column, because it has to be one of the values contained in the parent table.  
+
+**SQL FOREIGN KEY on CREATE TABLE**  
+
+The following SQL creates a `FOREIGN KEY` on the "PersonsID" column when the "Orders" table is created:  
+
+MySQL:  
+
+```
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+```
+SQL Server / Oracle / MS Access:  
+
+```
+CREATE TABLE Orders (
+    OrderID int NOT NULL PRIMARY KEY,
+    OrderNumber int NOT NULL,
+    PersonID int FOREIGN KEY REFERENCES Persons(PersonID)
+);
+```
+
+To allow naming of a `FOREIGN KEY` constraint, and for defining a `FOREIGN KEY` constraint on multiple columns, use the folowing SQL syntax:  
+
+**MySQL / SQL Server / Oracle / MS Access:**    
+
+```
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+
+```  
+**SQL FOREIGN KEY on ALTER TABLE**  
+
+To create a `FOREIGN KEY` constraint on the "PersonID" column when the "Orders" table is already created, use the following SQL:  
+
+**MySQL / SQL Server / Oracle / MS Access:**  
+
+```
+ALTER TABLE Orders
+ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+```
+
+
+To allow naming of a `FOREIGN KEY` constraint, and for defining a `FOREIGN KEY` constraint on multiple columns, use the following SQL syntax:  
+
+**`MySQL / SQL Server / Oracle / MS Access:**  
+
+```
+ALTER TABLE Orders
+ADD CONSTRAINT FK_PersonOrder
+FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+```
+**DROP a FOREIGN KEY Constraint**  
+To drop a `FOREIGN KEY` constraint, use the following SQL:  
+
+**MySQL:**  
+
+```
+ALTER TABLE Orders
+DROP FOREIGN KEY FK_PersonOrder;
+```
+**SQL Server / Oracle / MS Access:**  
+
+```
+ALTER TABLE Orders
+DROP CONSTRAINT FK_Persons
+```
+
+### 86. SQL CHECK Constraint  
+The following SQL creates a `CHECK` constraint on the "Age" column when the "Persons" table is created. The `CHECK` constraint ensures that the age of a person must be 18, or older:  
+
+**SQL CHECK on CREATE TABLE**    
+
+The following SQL creates a `CHECK` constraint on the "Age" column when the "Persons" table is created. 
+
+MySQL:  
+
+```
+CREATE TABLE Persons (
+  ID int NOT NULL,
+  LastName varchar(255) NOT NULL,
+  FirstName varchar(255),
+  Age int,
+  CHECK (Age>=18)
+);
+```   
+
+SQL Server / Oracle / MS Access:  
+
+```
+CREATE TABLE Persons(
+  ID int NOT NULL,
+  LastName varchar(255) NOT NULL,
+  FirstName varchar(255),
+  Age int CHECK (Age>=18)
+);
+```
+
+To allow naming of a `CHECK` constraint, and for defining a `CHECK` constraint on multiple columns, use the following SQL syntax:  
+
+**MySQL / SQL Server / Oracle / MS Access:**  
+
+```
+CREATE TABLE Persons(
+  ID int NOT NULL,
+  LastName varchar(255) NOT NULL,
+  FirstName varchar(255),
+  Age int,
+  City varchar(255),
+  CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
+
+);
+```
+
+**SQL CHECK on ALTER TABLE**  
+
+To create a `CHECK` constraint on the "Age" column when the table is already created, use the following SQL:  
+
+MySQL / SQL Server / Oracle / MS Access:  
+
+```
+ALTER TABLE Persons
+ADD CHECK (Age>=18);  
+```
+To allow naming of a `CHECK` constraint, and for defining a `CHECK` constraint on multiple columns, use the foll
+### For the reminder  
+
+**What we learned (1)**  
+
+* Selecting: `SELECT`  
+* Ordering: `ORDER BY`  
+* Filtering: `WHERE` and `HAVING`  
+* Aggregating: `SUM`,`COUNT`,`MIN`,`MAX`,`AVG`  
+* Text manipulation: `LEFT`,`RIGHT`,`LEN`,`SUBSTRING`  
+
+**What we learned (2)**  
+
+* `GROUP BY`  
+* `INNER JOIN`,`LEFT JOIN`,`RIGHT JOIN`  
+* `UNION` and `UNION ALL`  
+* Create, Read, Update, and DELETE  
+* Variables  
+* Temporary tables  
+
+**SQL DML and DDL**  
+SQL can be divided into two parts: 数据操作语言 (DML) and 数据定义语言(DDL)  
+
+DML:  
+
+* SELECT 
+* UPDATE  
+* DELETE  
+* INSERT INTO  
+
+DDL:  
+
+* CREATE DATABASE  
+* ALTER DATABASE  
+* CREATE TABLE  
+* DROP TABLE  
+* CREATE INDEX  
+* DROP INDEX   
+
+**For more info and  cheatsheets, please go to:**   
+[w3schools tutorial page][1]  
+
+
+
+
+[1]: https://www.w3schools.com/sql/default.asp "w3schools"  
+[2]:https://www.w3schools.com/sql/sql_datatypes.asp "datatypes"
+[3]:https://www.w3schools.com/sql/sql_check.asp "constraints"
