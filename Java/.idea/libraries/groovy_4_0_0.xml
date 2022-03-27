@@ -1,0 +1,68 @@
+<component name="libraryTable">
+  <library name="groovy-4.0.0" type="groovy-sdk">
+    <properties version="4.0.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/groovy-astbuilder-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-cli-picocli-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-datetime-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-cli-commons-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-ant-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-contracts-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-console-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-dateutil-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-docgenerator-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-jmx-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-groovydoc-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-ginq-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-jsr223-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-groovysh-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-json-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-macro-library-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-nio-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-servlet-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-macro-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-sql-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-templates-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-test-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-toml-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-test-junit5-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-testng-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-swing-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-typecheckers-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-xml-4.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-4.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/groovy-cli-commons-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-astbuilder-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-ant-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-cli-picocli-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-datetime-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-console-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-dateutil-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-contracts-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-docgenerator-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-ginq-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-jmx-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-groovydoc-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-jsr223-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-json-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-groovysh-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-macro-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-macro-library-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-nio-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-servlet-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-templates-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-test-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-sql-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-swing-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-testng-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-test-junit5-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-toml-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-typecheckers-4.0.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/groovy-xml-4.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
