@@ -348,7 +348,7 @@ Sometimes, you'll want to filter out missing values so you only get results whic
   WHERE birthdate IS NOT NULL;
 ```   
 
-### 16. LIKE and NOT LIKE  
+### 16. LIKE and NOT LIKE  / INEXACT Match
 
 As you've seen, the WHERE clause can be used to filter text data. However, so far you've only been able to filter by specifying the exact text you're interested in. In the real world, often you'll want to search for a pattern rather than a specific text string.  
 
@@ -1872,7 +1872,10 @@ FROM prime_ministers;
 
 ### 55. Subquery inside where
 
-You'll now try to figure out which countries had high average life expectancies (at the country level) in 2015.
+Why we need a subquery?  
+this can help us always have an updated value for our where statement if we add subquery in when we add a select from statement  
+
+You'll now try to figure out which countries had high average life expectancies (at the country level) in 2015. 
 
 **Instructions**
 **1/2**  
@@ -2267,7 +2270,7 @@ ORDER BY city_perc DESC
 -- Limit amount
 LIMIT 10;
 ```
-![alt text](/Users/shayne_lin/Desktop/work experiennce/UCSB/PSTAT10/Pstat10/pic/p1.png)
+
 ### Summary: Differences Between Union and Joins
 **Join**  
 
@@ -2368,6 +2371,24 @@ SELECT
 FROM 
   results;
 ```
+
+**More complex queries with autoincrement for Primary Key**  
+
+what it does?  
+it will automatically help you decide the id number so that you don't need to do it by yourself.  
+
+```
+CREATE TABLE exercise_logs
+  (id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT,
+  minutes INTEGER,
+  calories INTEGER,
+  heart_rate INTEGER);
+INSERT INTO exercise_logs(type,minutes,calories,heart_rate) VALUES("biking",30,100,110);
+
+// Note: you don't have to specify the id number here because you used the `AUTOINCREMENT` statement.
+```
+
 
 ### 68. Insert, Update, Delete  
 
@@ -2796,6 +2817,16 @@ Alter TABLE Customers
 ADD Email varchar(255);
 ```
 
+The following SQL helps to fill out null values so that when we alter the table to give it a new column, the previous tables will fill out the exiting data with a default value instead of simply showing null
+
+```
+ALTER TABLE diary_logs
+ADD emotion TEXT default "unknown";
+```
+
+if you want to change the added column type you can switch text to integer too here.
+
+
 **ALTER TABLE - DROP COLUMN**  
 To delete a column in a table, use the follwoing syntax (notice that some database systems don't allow deleting a column):  
 
@@ -3189,6 +3220,7 @@ CREATE TABLE Persons(
 
 To allow naming of a `CHECK` constraint, and for defining a `CHECK` constraint on multiple columns, use the following SQL syntax:  
 
+
 **MySQL / SQL Server / Oracle / MS Access:**  
 
 ```
@@ -3203,7 +3235,12 @@ CREATE TABLE Persons(
 );
 ```
 
-### For the reminder  
+### 87. Make your SQL safer.  
+
+please refer to: [Khanacademy_makesqlsafe][5]
+
+
+### 88. For the reminder  
 
 **What we learned (1)**  
 
@@ -3244,9 +3281,14 @@ DDL:
 **For more info and  cheatsheets, please go to:**   
 [w3schools tutorial page][1]  
 
+**For improving your SQL query, please go to:**
+[khanacademy][4]
+
 
 
 
 [1]: https://www.w3schools.com/sql/default.asp "w3schools"  
 [2]:https://www.w3schools.com/sql/sql_datatypes.asp "datatypes"
 [3]:https://www.w3schools.com/sql/sql_check.asp "constraints"
+[4]:https://www.khanacademy.org/computing/computer-programming/sql/relational-queries-in-sql/a/more-efficient-sql-with-query-planning-and-optimization "sql_query_tuning"
+[5]:https://www.khanacademy.org/computing/computer-programming/sql/modifying-databases-with-sql/a/make-your-sql-safer "sql_safe"

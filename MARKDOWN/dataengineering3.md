@@ -83,8 +83,17 @@ Scheduling:
 * oozie
 * 企鹅
 
-> A data pipeline 
+> A data pipeline
 
-![standard graph](/Users/shayne_lin/Desktop/work experiennce/面试/Big Data Hadoop/截屏2022-03-27 下午1.11.09)
+For example, 
+1. SQL to get data, NoSQL to get Product Catalog  
+2. Apache Spark to process,
+3. Going into Analytics warehouse.
+4. All of the process will be sceduled using Apache Airflow
+
+#### 3. Data processing in the cloud  
+
+
+
 
             
